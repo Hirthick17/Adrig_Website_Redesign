@@ -5,15 +5,65 @@
  * hand-authored per page, per the "faster coding implementation" brief.
  */
 
-/** The one approved hero copy block — reused by both HeroIntro and HeroResolution, never duplicated. */
+/**
+ * The one approved hero copy block, carried over verbatim from the
+ * validated hero.html trailer (final composition) — not invented here.
+ */
 export const HERO_COPY = {
-  eyebrow: "AI-Powered Solutions",
-  headline: "Transforming Ideas Into",
-  headlineAccent: "Intelligent Solutions",
-  description: "Driving innovation with AI, Automation & Next-Gen Tech.",
-  primaryCta: { label: "Let's Build Something", href: "/contact" },
-  secondaryCta: { label: "Explore Our Services", href: "/services" },
+  eyebrow: "Engineering Intelligent Systems",
+  headline: "Engineering",
+  headlineAccent: "Intelligent Systems",
+  headlineLine2: "For Businesses That Want To Evolve.",
+  description:
+    "ADRIG combines AI, automation, software engineering and data intelligence to transform the way businesses operate.",
+  primaryCta: { label: "Start Your Transformation", href: "/contact" },
+  secondaryCta: { label: "Explore Capabilities", href: "/services" },
 };
+
+/** The three narrative beats that play while the city assembles — copy carried over from hero.html as-is. */
+export const HERO_STORY_BEATS = [
+  {
+    eyebrow: "01 — Digital awakening",
+    heading: "Engineering ",
+    accent: "Intelligent Systems",
+    body: "Every system worth trusting starts as a drawing. Precision before code.",
+    in: [0.02, 0.1] as [number, number],
+    out: [0.14, 0.21] as [number, number],
+  },
+  {
+    eyebrow: "02 — Ecosystem formation",
+    heading: "Connecting intelligence, technology, ",
+    accent: "and business.",
+    body: "Enterprise systems, data architecture and workflow — assembled as one structure rather than bolted together.",
+    in: [0.2, 0.28] as [number, number],
+    out: [0.33, 0.4] as [number, number],
+  },
+  {
+    eyebrow: "04 — Transformation",
+    heading: "Disconnected work becomes ",
+    accent: "one system.",
+    body: "Broken handoffs merge. Workflows synchronise. The people stay — the friction doesn't.",
+    in: [0.56, 0.64] as [number, number],
+    out: [0.72, 0.79] as [number, number],
+  },
+];
+
+/**
+ * One operational pain-point per district, index-aligned with DISTRICTS in
+ * cinema-engine.ts (Healthcare, Finance, Data & Cloud, Manufacturing, Retail,
+ * Logistics & Transport, Energy). Rendered as a message bubble that appears
+ * large at the district and travels toward the tower, shrinking as it goes —
+ * illustrative industry pain points, not a claim about a real client.
+ */
+export const HERO_PROBLEM_BUBBLES = [
+  { label: "Healthcare", text: "Patient records live in six systems that don't talk to each other." },
+  { label: "Finance", text: "Reconciliation still happens in a spreadsheet, by hand." },
+  { label: "Data & Cloud", text: "Every team ships. Nobody has the full picture." },
+  { label: "Manufacturing", text: "Downtime gets discovered after the line has already stopped." },
+  { label: "Retail", text: "Inventory counts never match what's actually on the shelf." },
+  { label: "Logistics & Transport", text: "Nobody knows where a shipment is until it doesn't arrive." },
+  { label: "Energy", text: "Grid data updates hourly. Decisions can't wait that long." },
+];
 
 export type NavItem = { label: string; href: string; children?: NavItem[] };
 

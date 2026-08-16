@@ -4,19 +4,22 @@ import Card from "@/components/ui/Card";
 import CTASection from "@/components/ui/CTASection";
 import { WORK_ITEMS } from "@/lib/site-data";
 
-export const metadata: Metadata = { title: "Work" };
+export const metadata: Metadata = { title: "Our Work — ADRIG" };
 
 export default function WorkIndex() {
   return (
     <>
       <PageHero
         eyebrow="Our Work"
-        headline="Real solutions."
-        headlineAccent="Real impact."
-        description="Explore how we turn complex challenges into powerful, scalable solutions."
+        headline="Proven deployments."
+        headlineAccent="Real operational impact."
+        description="Explore how we engineer and deploy high-throughput AI, automation, and software systems for leading enterprises."
       />
-      <section className="py-16 sm:py-24">
-        <div className="shell grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="py-20 sm:py-28 bg-[#FAFCFF] border-b border-slate-200/60 relative overflow-hidden">
+        {/* Subtle Blueprint grid overlay */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(14,92,238,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(14,92,238,0.03)_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
+
+        <div className="shell relative z-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {WORK_ITEMS.map((w, i) => (
             <Card
               key={w.slug}
@@ -24,12 +27,12 @@ export default function WorkIndex() {
               eyebrow={w.category}
               title={`${w.name} · ${w.client}`}
               description={w.summary}
-              delay={(i % 3) * 0.06}
+              delay={(i % 3) * 0.05}
             />
           ))}
         </div>
       </section>
-      <CTASection title="Let's build the next success story together." description="Have a project in mind? We're ready to bring it to life." />
+      <CTASection title="Let's build the next success story together." description="Have a mission-critical project in mind? We're ready to engineer it." />
     </>
   );
 }

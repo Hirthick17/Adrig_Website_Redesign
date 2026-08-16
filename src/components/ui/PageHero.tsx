@@ -9,7 +9,7 @@ export default function PageHero({
   primaryCta,
   secondaryCta,
 }: {
-  eyebrow: string;
+  eyebrow?: string;
   headline: string;
   headlineAccent?: string;
   description?: string;
@@ -18,9 +18,8 @@ export default function PageHero({
 }) {
   return (
     <section className="border-b border-adrig-hairline bg-gradient-to-br from-adrig-blue-soft via-adrig-bg to-white">
-      <div className="shell py-20 sm:py-28">
+      <div className="shell pb-20 pt-32 sm:pb-28 sm:pt-40">
         <Reveal className="max-w-3xl">
-          <p className="mb-4 text-[12px] font-bold uppercase tracking-[.2em] text-adrig-blue">{eyebrow}</p>
           <h1 className="text-[clamp(2.2rem,5vw,3.8rem)] font-bold leading-[1.05] tracking-[-.035em] text-adrig-ink">
             {headline} {headlineAccent && <span className="text-adrig-blue">{headlineAccent}</span>}
           </h1>

@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import { GENERATIVE_AI } from "@/lib/site-data";
-import ServiceTemplate from "@/components/services/ServiceTemplate";
+import { llmService } from "@/content/services";
+import { ServicePage as ServicePageView } from "@/components/service-page/ServicePage";
 
-export const metadata: Metadata = { title: "Generative AI" };
+export const metadata: Metadata = {
+  title: "Generative AI & LLM Development — ADRIG",
+  description: llmService.hero.description,
+};
 
 export default function GenerativeAIPage() {
-  return <ServiceTemplate service={GENERATIVE_AI} parentLabel="Generative AI" parentHref="/generative-ai" />;
+  return <ServicePageView service={llmService} />;
 }

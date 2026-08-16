@@ -2,9 +2,9 @@ import Hero from "@/components/hero/Hero";
 import CTASection from "@/components/ui/CTASection";
 import {
   WhyAdrigSection,
-  WhatWeDoSection,
   ServicesSection,
   ProductsSection,
+  HowWeWorkSection,
   CaseStudiesSection,
   TestimonialsSection,
   IndustriesSection,
@@ -16,9 +16,9 @@ export default function Home() {
     <>
       <Hero />
       <WhyAdrigSection />
-      <WhatWeDoSection />
       <ServicesSection />
       <ProductsSection />
+      <HowWeWorkSection />
       <CaseStudiesSection />
       <TestimonialsSection />
       <IndustriesSection />
