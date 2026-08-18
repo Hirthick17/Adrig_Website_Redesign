@@ -6,36 +6,24 @@ import { ServiceHero } from "./sections/ServiceHero";
 import { ProblemStory } from "./sections/ProblemStory";
 import { CapabilityStage } from "./sections/CapabilityStage";
 import { ArchitectureReveal } from "./sections/ArchitectureReveal";
-import { AdrigProcessSection } from "@/components/sections/AdrigProcessSection";
 import { UseCaseGrid } from "./sections/UseCaseGrid";
 import { ProofSection } from "./sections/ProofSection";
 import { ServiceCTA } from "./sections/ServiceCTA";
-import Breadcrumb from "@/components/ui/Breadcrumb";
 
-export function ServicePage({
-  service,
-}: {
-  service: ServiceConfig;
-}) {
+export function ServicePage({ service }: { service: ServiceConfig }) {
+  const serviceDisplayName =
+    service.hero.eyebrow || service.hero.title || "this capability";
+
   return (
-    <main className="overflow-clip bg-[#FAFCFF] text-slate-950 font-sans selection:bg-[#0E5CEE] selection:text-white">
-      {/* Breadcrumb Navigation */}
-      <Breadcrumb
-        items={[
-          { label: "Home", href: "/" },
-          { label: "Services", href: "/services" },
-          { label: service.hero.eyebrow },
-        ]}
-      />
-
-      {/* 1. Hero with Parallax Edge Focus Images */}
+    <div className="min-h-screen bg-[#FAFCFF] text-slate-950">
+      {/* 01. Hero with calm, mouse-depth parallax and editorial typography */}
       <ServiceHero
         serviceKey={service.key}
         content={service.hero}
         heroImages={service.heroImages}
       />
 
-      {/* 2. Operational Problem Story with Sticky Scroll Meme/Image Showcase */}
+      {/* 02. Problem Breakdown & Context */}
       <ProblemStory
         title={service.problem.title}
         description={service.problem.description}
@@ -44,30 +32,30 @@ export function ServicePage({
         problemImages={service.problemImages}
       />
 
-      {/* 3. Core Capabilities with 4/8 Asymmetric Stage */}
+      {/* 03. Interactive Capabilities Stage */}
       <CapabilityStage
         capabilities={service.capabilities}
         serviceKey={service.key}
       />
 
-      {/* 4. System Architecture with Tracing Beam */}
+      {/* 04. Technical Architecture Pipeline */}
       <ArchitectureReveal
         architecture={service.architecture}
         serviceKey={service.key}
       />
 
-      {/* 5. Shared ADRIG Delivery Process (AdrigProcessSection) */}
-      <AdrigProcessSection />
+      {/* 05. Proven Use Cases */}
+      <UseCaseGrid
+        items={service.useCases}
+        serviceKey={service.key}
+      />
 
-      {/* 6. Enterprise Use Cases Spotlight Grid */}
-      <UseCaseGrid items={service.useCases} serviceKey={service.key} />
+      {/* 06. Verified Outcome Proof (if available) */}
+      {service.proof && <ProofSection proof={service.proof} />}
 
-      {/* 7. Proof & Case Study Evidence */}
-      {service.proof ? <ProofSection proof={service.proof} /> : null}
-
-      {/* 8. Final Conversion CTA */}
-      <ServiceCTA serviceName={service.hero.eyebrow} />
-    </main>
+      {/* 07. Enterprise Systems CTA */}
+      <ServiceCTA serviceName={serviceDisplayName} />
+    </div>
   );
 }
 

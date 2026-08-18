@@ -3,9 +3,15 @@
 import Link from "next/link";
 import { useState } from "react";
 import { NAV_LINKS } from "@/lib/site-data";
+import {
+  Dropdown,
+  Trigger,
+  TriggerWrapper,
+  Tabs,
+  Tab,
+} from "@/components/ui/dropdown-menu";
 
 export default function Nav() {
-  const [open, setOpen] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -19,40 +25,48 @@ export default function Nav() {
         </Link>
 
         <nav className="ml-2 hidden items-center gap-1 md:flex">
-          {NAV_LINKS.map((item) => (
-            <div
-              key={item.label}
-              className="relative"
-              onMouseEnter={() => item.children && setOpen(item.label)}
-              onMouseLeave={() => item.children && setOpen(null)}
-            >
+          {NAV_LINKS.map((item) => {
+            const hasChildren = Boolean(item.children?.length);
+
+            if (hasChildren) {
+              return (
+                <div key={item.label} className="relative">
+                  <Dropdown>
+                    <TriggerWrapper>
+                      <Trigger>
+                        <span>{item.label}</span>
+                      </Trigger>
+                    </TriggerWrapper>
+                    <Tabs className="w-[320px]">
+                      <Tab>
+                        <div className="grid gap-1">
+                          {item.children!.map((child) => (
+                            <Link
+                              key={child.href}
+                              href={child.href}
+                              className="rounded-xl px-3.5 py-2.5 text-[14px] font-medium text-adrig-ink/80 transition hover:bg-adrig-blue-soft hover:text-adrig-ink"
+                            >
+                              {child.label}
+                            </Link>
+                          ))}
+                        </div>
+                      </Tab>
+                    </Tabs>
+                  </Dropdown>
+                </div>
+              );
+            }
+
+            return (
               <Link
+                key={item.label}
                 href={item.href}
                 className="flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[14.5px] font-medium text-adrig-ink/80 transition hover:text-adrig-ink"
               >
                 {item.label}
-                {item.children && (
-                  <svg width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden>
-                    <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                )}
               </Link>
-
-              {item.children && open === item.label && (
-                <div className="absolute left-0 top-full grid w-72 gap-1 rounded-2xl border border-adrig-hairline bg-white p-2 shadow-[0_24px_60px_-32px_rgba(15,32,71,0.35)]">
-                  {item.children.map((child) => (
-                    <Link
-                      key={child.href}
-                      href={child.href}
-                      className="rounded-xl px-3.5 py-2.5 text-[14px] font-medium text-adrig-ink/80 transition hover:bg-adrig-blue-soft hover:text-adrig-ink"
-                    >
-                      {child.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </nav>
 
         <Link

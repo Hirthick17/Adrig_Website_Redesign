@@ -9,7 +9,6 @@ export default function DataAnalysisScene() {
 
   return (
     <div className="relative w-full h-full min-h-[520px] rounded-3xl border border-slate-200/80 bg-white/95 p-6 sm:p-8 shadow-2xl shadow-blue-950/[0.06] backdrop-blur-xl flex flex-col justify-between overflow-hidden">
-      {/* Top telemetry bar */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-4">
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-[#1463FF] animate-pulse" />
@@ -22,7 +21,6 @@ export default function DataAnalysisScene() {
         </span>
       </div>
 
-      {/* Mode Switcher Toggle */}
       <div className="my-4 flex items-center justify-between bg-[#FAFCFF] p-1.5 rounded-2xl border border-slate-200/80">
         <button
           onClick={() => setViewMode("raw")}
@@ -48,7 +46,6 @@ export default function DataAnalysisScene() {
         </button>
       </div>
 
-      {/* Main Visual Display */}
       <div className="my-2 p-5 rounded-2xl bg-[#FAFCFF] border border-slate-200/80 min-h-[220px] flex flex-col justify-center">
         <AnimatePresence mode="wait">
           {viewMode === "raw" ? (
@@ -60,7 +57,7 @@ export default function DataAnalysisScene() {
               className="space-y-2 font-mono text-[11px] text-slate-600 bg-white p-4 rounded-xl border border-slate-200"
             >
               <p className="text-slate-400 font-medium pb-1 border-b border-slate-100">
-                // RAW SENSOR FEED 50,000 EPS (UNINDEXED):
+                RAW SENSOR FEED / 50,000 EPS (UNINDEXED):
               </p>
               <p>2026-08-16T17:40:01.092Z SENSOR_441: temp=88.4C, vib_hz=142.1, amp=0.88, err_flag=0</p>
               <p>2026-08-16T17:40:01.093Z SENSOR_442: temp=91.2C, vib_hz=188.4, amp=1.42, err_flag=1</p>
@@ -113,7 +110,6 @@ export default function DataAnalysisScene() {
         </AnimatePresence>
       </div>
 
-      {/* Bottom status */}
       <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
         <span className="font-mono">QUERY LATENCY: 14ms ON 10M ROWS</span>
         <span className="text-[#0E5CEE] font-semibold">CLICKHOUSE CLUSTER</span>

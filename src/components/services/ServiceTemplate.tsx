@@ -81,7 +81,7 @@ const SERVICE_CINEMATIC_DATA: Record<string, PainPointDetails> = {
       "Fully isolated multi-tenant architecture with sub-second API responses",
       "Automated CI/CD pipelines with canary deployments and instant rollbacks",
     ],
-    asset3D: "/services/SoftwareDevelopment.png",
+    asset3D: "/services/SoftawareDevelopment.png",
     systemTag: "CLOUD NATIVE // DISTRIBUTED",
   },
   "workflow-automation": {
@@ -340,14 +340,7 @@ export default function ServiceTemplate({
 
   return (
     <div className="bg-[#FAFCFF] text-slate-950 font-sans selection:bg-[#0E5CEE] selection:text-white">
-      {/* 1. Breadcrumb */}
-      <Breadcrumb
-        items={[
-          { label: "Home", href: "/" },
-          { label: parentLabel, href: parentHref },
-          { label: service.name },
-        ]}
-      />
+      
 
       {/* 2. Cinematic 3D Hero Section */}
       <section className="relative overflow-hidden border-b border-slate-200/60 bg-[#FAFCFF] pt-8 sm:pt-14 pb-20 sm:pb-28">

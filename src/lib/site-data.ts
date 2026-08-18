@@ -82,7 +82,6 @@ export const NAV_LINKS: NavItem[] = [
       { label: "Data Analysis & Predictive Analytics", href: "/services/predictive-analytics" },
     ],
   },
-  { label: "Our Products", href: "/products" },
   { label: "Work", href: "/work" },
   { label: "Generative AI", href: "/generative-ai" },
   { label: "Blockchain", href: "/blockchain" },

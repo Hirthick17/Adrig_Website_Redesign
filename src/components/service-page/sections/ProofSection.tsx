@@ -21,7 +21,7 @@ export function ProofSection({ proof }: { proof: ProofData }) {
 
           <div className="lg:col-span-8 flex flex-col justify-between">
             <p className="text-xl sm:text-2xl font-normal text-slate-900 tracking-tight leading-snug">
-              "{proof.description}"
+              {proof.description}
             </p>
             {proof.client && (
               <div className="mt-6 pt-4 border-t border-slate-200/70 flex items-center justify-between">

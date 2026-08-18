@@ -2,10 +2,10 @@
 
 import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { HeroGeometricShaderBackground } from '@/components/ui/hero-geometric';
 import { CircuitBoard } from '@/components/ui/circuit-board';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { InteractiveHoverButton } from '@/registry/magicui/interactive-hover-button';
 
 function IllustrationPipeline() {
   return (
@@ -205,22 +205,8 @@ export function StrengthsFullScreenHero() {
     <section
       ref={sectionRef}
       id="why-adrig"
-      className="snap-section min-h-screen w-full bg-[#FAFCFF] text-slate-900 flex flex-col justify-between py-16 sm:py-24 px-5 sm:px-8 lg:px-14 relative overflow-hidden font-sans selection:bg-[#0E5CEE] selection:text-white border-b border-slate-200/60"
+      className="relative min-h-screen w-full bg-transparent text-slate-900 flex flex-col justify-between py-16 sm:py-24 px-5 sm:px-8 lg:px-14 overflow-hidden selection:bg-[#0E5CEE] selection:text-white"
     >
-      {/* Ambient WebGL background */}
-      <HeroGeometricShaderBackground
-        color1="#93C5FD"
-        color2="#FFFFFF"
-        speed={0.5}
-        className="opacity-60"
-      />
-
-      {/* Soft radial glows — blue-derived only */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[450px] bg-blue-300/15 blur-[130px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-[500px] h-[300px] bg-blue-200/20 blur-[110px] rounded-full pointer-events-none" />
-
-      {/* Blueprint grid overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(14,92,238,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(14,92,238,0.04)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_80%_65%_at_50%_45%,#000_60%,transparent_100%)] pointer-events-none" />
 
       {/* Section header */}
       <div className="relative z-10 w-full max-w-6xl mx-auto text-center mb-10 sm:mb-14">
@@ -264,11 +250,6 @@ export function StrengthsFullScreenHero() {
             {/* Card body */}
             <div className="relative z-10 p-6 sm:p-7 flex flex-col justify-between flex-1">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#1463FF] inline-flex items-center gap-1.5 mb-3">
-                  <span className="w-1 h-1 rounded-full bg-[#1463FF]" />
-                  {item.eyebrow}
-                </span>
-
                 <h3 className="text-xl sm:text-2xl font-normal text-slate-900 tracking-tight leading-snug group-hover:text-[#0E5CEE] transition-colors duration-300">
                   {item.title}
                 </h3>
@@ -279,13 +260,14 @@ export function StrengthsFullScreenHero() {
               </div>
 
               <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-                <Link
-                  href={item.href}
-                  className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-800 group-hover:text-[#0E5CEE] transition-colors duration-300"
+                <InteractiveHoverButton
+                  variant="secondary"
+                  onClick={() => window.location.href = item.href}
+                  className="text-xs sm:text-sm gap-2"
                 >
                   <span>{item.cta}</span>
-                  <ArrowRight className="w-4 h-4 text-[#0E5CEE] transform group-hover:translate-x-1 transition-transform duration-300" />
-                </Link>
+                  <ArrowRight className="w-4 h-4" />
+                </InteractiveHoverButton>
               </div>
             </div>
 

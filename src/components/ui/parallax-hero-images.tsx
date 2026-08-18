@@ -12,15 +12,17 @@ interface ParallaxHeroImagesProps {
   className?: string;
 }
 
-// Predefined stable positions for edge-focus variant — deterministic, no Math.random on render
-const EDGE_POSITIONS: { top: string; left?: string; right?: string; bottom?: string; width: string; height: string; depth: number; rotate: number }[] = [
-  { top: "6%",  left:  "3%",  width: "42%", height: "52%", depth: 0.08, rotate: -4 },
-  { top: "4%",  right: "2%",  width: "38%", height: "48%", depth: 0.14, rotate:  3 },
-  { bottom: "6%", left: "2%", width: "36%", height: "44%", depth: 0.06, rotate:  2 },
-  { bottom: "4%", right: "3%",width: "40%", height: "50%", depth: 0.11, rotate: -3 },
-  { top: "30%", left: "28%",  width: "44%", height: "40%", depth: 0.05, rotate:  1 },
-  { top: "18%", right: "30%", width: "32%", height: "38%", depth: 0.09, rotate: -2 },
+// Six-panel collage tuned to mimic a meme/reference storyboard: one central focus,
+// with supporting frames pinned to the edges so the system feels alive without losing legibility.
+const EDGE_POSITIONS: { top?: string; left?: string; right?: string; bottom?: string; width: string; height: string; depth: number; rotate: number }[] = [
+  { top: "8%", left: "2%", width: "30%", height: "34%", depth: 0.08, rotate: -5 },
+  { top: "10%", right: "3%", width: "28%", height: "38%", depth: 0.12, rotate: 5 },
+  { top: "26%", left: "24%", width: "52%", height: "44%", depth: 0.16, rotate: 1 },
+  { bottom: "8%", left: "5%", width: "36%", height: "32%", depth: 0.07, rotate: 3 },
+  { bottom: "10%", right: "7%", width: "34%", height: "30%", depth: 0.1, rotate: -4 },
+  { top: "18%", right: "30%", width: "24%", height: "26%", depth: 0.09, rotate: -2 },
 ];
+
 
 export function ParallaxHeroImages({
   images,
@@ -63,13 +65,14 @@ export function ParallaxHeroImages({
         const pos = EDGE_POSITIONS[i] || EDGE_POSITIONS[0];
         const tx = mouse.x * pos.depth * 120;
         const ty = mouse.y * pos.depth * 80;
+        const isCenter = i === 2;
 
         return (
           <motion.div
             key={i}
             animate={{ x: tx, y: ty }}
             transition={{ type: "spring", stiffness: 60, damping: 22, mass: 0.8 }}
-            className="absolute overflow-hidden rounded-2xl shadow-2xl shadow-slate-900/25 border border-white/60"
+            className={`absolute overflow-hidden border border-white/70 shadow-[0_24px_60px_rgba(15,23,42,0.18)] ${isCenter ? "rounded-[30px]" : "rounded-[22px]"}`}
             style={{
               top: pos.top,
               left: pos.left,
@@ -79,6 +82,7 @@ export function ParallaxHeroImages({
               height: pos.height,
               rotate: `${pos.rotate}deg`,
               zIndex: 10 + i,
+              background: isCenter ? "rgba(255,255,255,0.02)" : "rgba(255,255,255,0.08)",
             }}
           >
             <Image
@@ -89,15 +93,16 @@ export function ParallaxHeroImages({
               className="object-cover"
               priority={i < 2}
             />
-            {/* Subtle glass overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/20 via-transparent to-white/5 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/15 via-transparent to-white/10 pointer-events-none" />
+            {isCenter && (
+              <div className="absolute inset-x-5 bottom-5 h-12 rounded-full border border-white/60 bg-white/20 backdrop-blur-[2px]" />
+            )}
           </motion.div>
         );
       })}
 
-      {/* Center ambient glow */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-64 h-64 rounded-full bg-[#1463FF]/10 blur-3xl" />
+        <div className="h-64 w-64 rounded-full bg-[#1463FF]/10 blur-3xl" />
       </div>
     </div>
   );

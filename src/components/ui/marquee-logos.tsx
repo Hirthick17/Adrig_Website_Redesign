@@ -128,12 +128,12 @@ export function EnterpriseToolsMarquee() {
   ];
 
   return (
-    <div className="relative w-full overflow-hidden py-8">
+    <div className="relative left-1/2 w-[100vw] -translate-x-1/2 overflow-hidden py-8">
       {/* Edge gradient fades */}
-      <div className="pointer-events-none absolute left-0 top-0 bottom-0 z-10 w-24 bg-gradient-to-r from-[#FAFCFF] to-transparent" />
-      <div className="pointer-events-none absolute right-0 top-0 bottom-0 z-10 w-24 bg-gradient-to-l from-[#FAFCFF] to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-[#FAFCFF] to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-[#FAFCFF] to-transparent" />
 
-      <Marquee speed={32} pauseOnHover={true}>
+      <Marquee speed={32} pauseOnHover={true} className="w-[180vw] min-w-full">
         {tools.map((Logo, index) => (
           <div
             key={index}

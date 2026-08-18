@@ -1,0 +1,38 @@
+{
+  "projectName": "adrig-next",
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "outputDirectory": ".next",
+  "public": false,
+  "regions": ["sfo1"],
+  "functions": {
+    "api/**/*.ts": {
+      "maxDuration": 60
+    }
+  },
+  "env": [
+    {
+      "key": "NEXT_PUBLIC_SITE_URL",
+      "value": "@adrig-next-site-url"
+    }
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "main": true,
+      "staging": true
+    }
+  },
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/.*",
+      "dest": "$1"
+    }
+  ]
+}

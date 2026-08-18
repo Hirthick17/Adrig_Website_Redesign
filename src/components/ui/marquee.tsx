@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { type CSSProperties } from "react";
 import { cn } from "@/lib/utils";
 
 interface MarqueeProps {
@@ -33,8 +33,8 @@ export function Marquee({
         className
       )}
       style={{
-        ["--duration" as any]: `${speed}s`,
-      }}
+        ["--duration" as string]: `${speed}s`,
+      } as CSSProperties}
     >
       {Array(repeat)
         .fill(0)

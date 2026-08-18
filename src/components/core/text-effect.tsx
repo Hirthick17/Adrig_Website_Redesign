@@ -1,12 +1,8 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import {
-  motion,
-  type TargetAndTransition,
-  type Variants,
-} from 'framer-motion';
-import React from 'react';
+import { motion, type Variants } from 'framer-motion';
+import React, { type ElementType } from 'react';
 
 export type PresetType = 'blur' | 'fade-in-blur' | 'scale' | 'fade' | 'slide';
 export type PerType = 'word' | 'char' | 'line';
@@ -108,9 +104,11 @@ export function TextEffect({
   segmentWrapperClassName,
 }: TextEffectProps) {
   const segments = splitText(children, per);
-  const Tag = motion[as as keyof typeof motion] as React.ElementType;
+  const MotionTag = ((as && (motion as any)[as]) || motion.p) as React.ComponentType<any>;
 
   const activePreset = presetVariants[preset] || presetVariants.fade;
+
+
 
   const containerVariants: Variants = {
     hidden: variants?.container?.hidden || defaultContainerVariants.hidden,
@@ -127,7 +125,7 @@ export function TextEffect({
   const itemVariants: Variants = variants?.item || activePreset.item;
 
   return (
-    <Tag
+    <MotionTag
       initial="hidden"
       animate={trigger ? 'visible' : 'hidden'}
       variants={containerVariants}
@@ -154,7 +152,7 @@ export function TextEffect({
           </span>
         );
       })}
-    </Tag>
+    </MotionTag>
   );
 }
 

@@ -6,13 +6,14 @@ import Card from "@/components/ui/Card";
 import StackingCards from "@/components/ui/stacking-card";
 import StrengthsFullScreenHero from "@/components/home/StrengthsFullScreenHero";
 import ProductsCarousel from "@/components/home/ProductsCarousel";
-import { AdrigProcessSection } from "@/components/sections/AdrigProcessSection";
+import AdrigProcessSection from "@/components/sections/AdrigProcessSection";
+import { CaseStudiesShowcase } from "@/components/home/CaseStudiesShowcase";
 import { BackgroundLines } from "@/components/ui/background-lines";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { ArrowRight } from "lucide-react";
+import { InteractiveHoverButton } from "@/registry/magicui/interactive-hover-button";
 import {
   SERVICES,
-  WORK_ITEMS,
   INDUSTRIES,
   TECHNOLOGIES,
 } from "@/lib/site-data";
@@ -49,7 +50,7 @@ export function ServicesSection() {
   });
 
   return (
-    <section id="our-services" className="border-b border-slate-800/80 bg-slate-950">
+    <section id="our-services">
       <StackingCards
         projects={serviceCards}
         headingTitle="Engineering intelligent enterprise capabilities."
@@ -74,40 +75,7 @@ export function HowWeWorkSection() {
 /* =========================================================== CASE STUDIES */
 
 export function CaseStudiesSection() {
-  const featured = WORK_ITEMS.slice(0, 4);
-
-  return (
-    <section
-      id="case-studies"
-      className="border-b border-slate-200/60 bg-white py-20 sm:py-28 relative overflow-hidden"
-    >
-      <div className="shell">
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <SectionHeading
-            title="Proven results across complex operations"
-          />
-          <Link 
-            href="/work" 
-            className="inline-flex items-center gap-2 text-[14px] font-semibold text-slate-800 hover:text-[#0E5CEE] transition-colors"
-          >
-            <span>View all case studies</span>
-            <ArrowRight className="w-4 h-4 text-[#0E5CEE]" />
-          </Link>
-        </div>
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {featured.map((w, i) => (
-            <Card
-              key={w.slug}
-              href={`/work/${w.slug}`}
-              title={`${w.name} · ${w.client}`}
-              description={w.summary}
-              delay={(i % 4) * 0.06}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+  return <CaseStudiesShowcase />;
 }
 
 /* ========================================================== TESTIMONIALS */
@@ -154,7 +122,7 @@ export function TestimonialsSection() {
   return (
     <section
       id="testimonials"
-      className="border-b border-slate-200/60 bg-[#FAFCFF] py-20 sm:py-28 relative overflow-hidden"
+      className="border-b border-slate-200/60 py-20 sm:py-28 relative overflow-hidden"
     >
       <div className="shell relative z-10">
         <div className="mb-8">
@@ -174,28 +142,28 @@ import { Heading, Paragraph, Price, PricingWrapper } from "@/components/ui/prici
 
 const FEATURED_INDUSTRIES = [
   {
-    sector: "SECTOR 01 // INFRASTRUCTURE",
+    sector: "",
     title: "Railways & Mobility",
     description:
       "Autonomous block management, real-time telemetry, and predictive maintenance for high-traffic transport corridors.",
     href: "/industries",
   },
   {
-    sector: "SECTOR 02 // LIFE SCIENCES",
+    sector: "",
     title: "Clinical AI & Healthcare",
     description:
       "Air-gapped clinical knowledge retrieval, HIPAA-compliant patient triage, and automated multi-modal record synthesis.",
     href: "/industries",
   },
   {
-    sector: "SECTOR 03 // FINTECH",
+    sector: "",
     title: "Financial Ledgers & Banking",
     description:
       "High-throughput transaction validation, autonomous compliance audits, and sovereign event ledgers.",
     href: "/industries",
   },
   {
-    sector: "SECTOR 04 // SUPPLY CHAIN",
+    sector: "",
     title: "Smart Logistics & Retail",
     description:
       "Sub-second ERP event routing, machine anomaly detection, and automated multimodal order dispatching.",
@@ -207,21 +175,22 @@ export function IndustriesSection() {
   return (
     <section
       id="industries"
-      className="relative border-b border-slate-200/60 overflow-hidden bg-[#FAFCFF]"
+      className="relative border-b border-slate-200/60 overflow-hidden"
     >
-      <BackgroundLines className="w-full py-20 sm:py-28 bg-[#FAFCFF]">
+      <BackgroundLines className="w-full py-20 sm:py-28 bg-transparent">
         <div className="shell relative z-10">
           <div className="flex flex-wrap items-end justify-between gap-6 mb-12">
             <SectionHeading
               title="Domain expertise across mission-critical sectors"
             />
-            <Link
-              href="/industries"
-              className="inline-flex items-center gap-2 text-[14px] font-semibold text-slate-800 hover:text-[#0E5CEE] transition-colors"
+            <InteractiveHoverButton
+              variant="secondary"
+              onClick={() => window.location.href = '/industries'}
+              className="text-[14px]"
             >
               <span>Explore all industries</span>
-              <ArrowRight className="w-4 h-4 text-[#0E5CEE]" />
-            </Link>
+              <ArrowRight className="w-4 h-4" />
+            </InteractiveHoverButton>
           </div>
 
           {/* PricingWrapper Crosses Grid with Motion */}
@@ -240,17 +209,7 @@ export function IndustriesSection() {
             ))}
           </div>
 
-          {/* Secondary sector pills */}
-          <div className="mt-12 flex flex-wrap justify-center gap-3 pt-6 border-t border-slate-200/70">
-            {INDUSTRIES.map((ind) => (
-              <span
-                key={ind}
-                className="rounded-full border border-slate-200/80 bg-white/90 px-4 py-2 text-[13px] font-normal text-slate-700 shadow-xs hover:border-blue-300 hover:text-[#0E5CEE] transition-all"
-              >
-                {ind}
-              </span>
-            ))}
-          </div>
+    
         </div>
       </BackgroundLines>
     </section>
@@ -264,39 +223,30 @@ export function TechnologiesSection() {
   return (
     <section
       id="technologies"
-      className="border-b border-slate-200/60 bg-[#FAFCFF] py-20 sm:py-28 relative overflow-hidden"
+      className="border-b border-slate-200/60 min-h-[100svh] py-20 sm:py-28 relative overflow-hidden"
     >
       {/* Blueprint grid overlay */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(14,92,238,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(14,92,238,0.03)_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
 
-      <div className="shell relative z-10">
+      <div className="shell relative z-10 flex min-h-[100svh] flex-col justify-center">
         <div className="flex flex-wrap items-end justify-between gap-6 mb-10">
           <SectionHeading
             title="Modern enterprise tools & frameworks"
           />
-          <Link
-            href="/technologies"
-            className="inline-flex items-center gap-2 text-[14px] font-semibold text-slate-800 hover:text-[#0E5CEE] transition-colors"
+          <InteractiveHoverButton
+            variant="secondary"
+            onClick={() => window.location.href = '/technologies'}
+            className="text-[14px]"
           >
             <span>View all technologies</span>
-            <ArrowRight className="w-4 h-4 text-[#0E5CEE]" />
-          </Link>
+            <ArrowRight className="w-4 h-4" />
+          </InteractiveHoverButton>
         </div>
 
         {/* Continuous Animated Marquee with Enterprise Logos */}
         <EnterpriseToolsMarquee />
 
-        {/* Tech Badges Cloud */}
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          {TECHNOLOGIES.map((tech) => (
-            <span
-              key={tech}
-              className="rounded-full border border-slate-200/80 bg-white/90 backdrop-blur-sm px-4 py-2 text-[13px] font-normal text-slate-700 shadow-xs hover:border-blue-300 hover:text-[#0E5CEE] transition-all"
-            >
-              {tech}
-            </span>
-          ))}
-        </div>
+
       </div>
     </section>
   );

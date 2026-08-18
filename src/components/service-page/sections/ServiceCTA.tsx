@@ -27,7 +27,7 @@ export function ServiceCTA({ serviceName }: { serviceName: string }) {
             href="/contact"
             className="inline-flex min-h-12 items-center gap-2 rounded-full bg-white px-8 text-sm font-semibold text-slate-950 shadow-lg transition duration-300 hover:bg-[#1463FF] hover:text-white"
           >
-            <span>Let's talk</span>
+            <span>Let&apos;s talk</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
           <Link

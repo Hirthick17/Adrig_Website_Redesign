@@ -69,7 +69,7 @@ export default function ChatbotScene() {
                   : "bg-[#FAFCFF] border-slate-200/80 text-slate-700 hover:bg-slate-50"
               }`}
             >
-              <span className="truncate pr-2">"{item.q}"</span>
+              <span className="truncate pr-2">{item.q}</span>
               <Send className={`w-3.5 h-3.5 shrink-0 ${selectedIdx === i ? "text-[#0E5CEE]" : "text-slate-400"}`} />
             </button>
           ))}

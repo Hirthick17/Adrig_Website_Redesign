@@ -11,7 +11,7 @@ export const StickyScroll = ({
   content: {
     title: string;
     description: string;
-    content?: React.ReactNode | any;
+    content?: React.ReactNode;
   }[];
   contentClassName?: string;
 }) => {
@@ -70,18 +70,7 @@ export const StickyScroll = ({
                 onClick={() => handleCardClick(index)}
                 className="py-16 first:pt-4 cursor-pointer group transition-all"
               >
-                <div className="flex items-center gap-2 mb-2">
-                  <span
-                    className={cn(
-                      "text-xs font-mono font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full transition-colors",
-                      isActive
-                        ? "bg-[#EEF4FF] text-[#0E5CEE] border border-blue-200/60"
-                        : "text-slate-400 bg-slate-100"
-                    )}
-                  >
-                    PAIN POINT 0{index + 1}
-                  </span>
-                </div>
+
 
                 <motion.h3
                   animate={{

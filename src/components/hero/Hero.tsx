@@ -43,6 +43,17 @@ function smoothstep(x: number) {
   return v * v * (3 - 2 * v);
 }
 
+function getHeroSpeedBoost() {
+  if (typeof window === "undefined") return 1.25;
+
+  const stage = document.querySelector(".hero-stage") as HTMLElement | null;
+  const stageHeight = stage ? stage.offsetHeight || window.innerHeight : window.innerHeight;
+  const scrollNorm = clamp(window.scrollY / Math.max(stageHeight * 0.7, 1), 0, 1);
+
+  // Subtle acceleration only: 1.25x at rest, up to 1.5x as the user scrolls.
+  return 1.25 + scrollNorm * 0.25;
+}
+
 /**
  * The hero — an authored software-3D "Industry City" (see cinema-engine.ts,
  * ported as-is from the approved hero.html) that assembles itself
@@ -173,7 +184,8 @@ export default function Hero() {
     function frame(now: number) {
       if (startRef.current === null) startRef.current = now;
       const elapsedMs = now - (startRef.current as number);
-      const t = clamp(elapsedMs / DURATION_MS, 0, 1);
+      const effectiveSpeed = getHeroSpeedBoost();
+      const t = clamp((elapsedMs * effectiveSpeed) / DURATION_MS, 0, 1);
 
       // Independent of the story timeline: a slow, continuous dolly toward
       // the tower at 0.2% of the remaining distance per second, so the shot

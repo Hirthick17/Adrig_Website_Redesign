@@ -11,8 +11,9 @@ import { cn } from "@/lib/utils";
 /* eslint-disable @typescript-eslint/no-namespace */
 declare module "react" {
     namespace JSX {
-        // eslint-disable-next-line @typescript-eslint/no-empty-interface
-        interface IntrinsicElements extends ThreeElements { }
+        interface IntrinsicElements extends ThreeElements {
+            [key: string]: unknown;
+        }
     }
 }
 /* eslint-enable @typescript-eslint/no-namespace */

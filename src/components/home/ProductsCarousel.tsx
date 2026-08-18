@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { Carousel, Card } from "@/components/ui/apple-cards-carousel";
+import { InteractiveHoverButton } from "@/registry/magicui/interactive-hover-button";
 import { PRODUCTS } from "@/lib/site-data";
 
 /* ---- Per-product expanded content ---- */
@@ -129,9 +130,9 @@ function ProductContent({ slug }: { slug: string }) {
               ))}
             </div>
           </div>
-          <Link
-            href={`/products#${slug}`}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#0D1F3C] px-6 py-3 text-[14px] font-medium text-white transition-colors hover:bg-[#0E5CEE]"
+          <InteractiveHoverButton
+            onClick={() => window.location.href = `/products#${slug}`}
+            className="text-[14px]"
           >
             Explore {product.name}
             <svg
@@ -148,7 +149,7 @@ function ProductContent({ slug }: { slug: string }) {
                 strokeLinejoin="round"
               />
             </svg>
-          </Link>
+          </InteractiveHoverButton>
         </div>
       </div>
     </div>
@@ -189,13 +190,13 @@ export default function ProductsCarousel() {
   return (
     <section
       id="our-products"
-      className="border-b border-adrig-hairline bg-white py-20 sm:py-28"
+      className="border-b border-adrig-hairline bg-transparent py-20 sm:py-28"
     >
       {/* Section header — aligned to the shell container */}
       <div className="shell">
         <div className="flex flex-wrap items-end justify-between gap-6 mb-2">
           <div className="max-w-2xl">
-            <h2 className="text-[clamp(1.8rem,3.2vw,2.75rem)] font-bold leading-[1.08] tracking-[-.03em] text-adrig-ink">
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-slate-950 leading-[1.08] max-w-4xl mx-auto font-sans">
               Platforms built from real operations
             </h2>
             <p className="mt-4 max-w-xl text-[15.5px] leading-[1.65] text-adrig-muted">
@@ -203,12 +204,13 @@ export default function ProductsCarousel() {
               engineered into a platform others can deploy.
             </p>
           </div>
-          <Link
-            href="/products"
-            className="text-[14px] font-semibold text-adrig-blue transition-colors hover:text-adrig-blue-strong"
+          <InteractiveHoverButton
+            variant="secondary"
+            onClick={() => window.location.href = '/products'}
+            className="text-[14px]"
           >
             View all products →
-          </Link>
+          </InteractiveHoverButton>
         </div>
       </div>
 

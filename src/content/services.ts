@@ -88,8 +88,20 @@ export const chatbotService: ServiceConfig = {
   key: "chatbot",
   slug: "chatbot-development",
   aliases: ["chatbot"],
-  heroImages: [ACE.mesh, ACE.globe, ACE.kbd, ACE.hero1, ACE.hero2, ACE.hero3],
-  problemImages: [ACE.hero1, ACE.hero2, ACE.hero3, ACE.kbd],
+  heroImages: [
+    "/services/chatbot-hero/ChatGPT Image Aug 16, 2026, 07_34_19 PM.png",
+    "/services/chatbot-hero/ChatGPT Image Aug 16, 2026, 07_48_53 PM (1).png",
+    "/services/chatbot-hero/ChatGPT Image Aug 16, 2026, 07_48_53 PM (2).png",
+    "/services/chatbot-hero/ChatGPT Image Aug 16, 2026, 07_48_53 PM (3).png",
+    "/services/chatbot-hero/ChatGPT Image Aug 16, 2026, 07_48_53 PM (4).png",
+    "/services/chatbot-hero/ChatGPT Image Aug 16, 2026, 07_48_53 PM (5).png",
+  ],
+  problemImages: [
+    "/services/chatbot-hero/ChatGPT Image Aug 16, 2026, 07_34_19 PM.png",
+    "/services/chatbot-hero/ChatGPT Image Aug 16, 2026, 07_48_53 PM (1).png",
+    "/services/chatbot-hero/ChatGPT Image Aug 16, 2026, 07_48_53 PM (2).png",
+    "/services/chatbot-hero/ChatGPT Image Aug 16, 2026, 07_48_53 PM (3).png",
+  ],
   hero: {
     eyebrow: "Chatbot Development",
     title: "Conversational systems built around",
