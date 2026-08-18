@@ -148,12 +148,12 @@ const FT: number[][] = [
 ];
 
 const FACE_SHADE = [
-  "176,188,208",
-  "255,255,255",
-  "186,198,218",
-  "224,232,244",
-  "205,215,232",
-  "178,191,212",
+  /* bottom */ "148,162,188",
+  /* top    */ "252,254,255",
+  /* front  */ "210,220,238",
+  /* back   */ "172,184,206",
+  /* left   */ "185,197,218",
+  /* right  */ "165,178,202",
 ];
 
 export class Cinema {
@@ -243,15 +243,18 @@ export class Cinema {
     const sx = s.x / 2,
       sz = s.z / 2,
       by = c.y - s.y / 2;
+
+    // Ambient occlusion shadow — dark bleed on the ground around building base
     this._quad(
-      V(c.x - sx + 1.2, by + 0.05, c.z - sz + 1.2),
-      V(c.x + sx + 2.6, by + 0.05, c.z - sz + 1.2),
-      V(c.x + sx + 2.6, by + 0.05, c.z + sz + 2.6),
-      V(c.x - sx + 1.2, by + 0.05, c.z + sz + 2.6),
-      rgba(INK, 0.06 * a),
+      V(c.x - sx - 1.8, by + 0.04, c.z - sz - 1.8),
+      V(c.x + sx + 1.8, by + 0.04, c.z - sz - 1.8),
+      V(c.x + sx + 1.8, by + 0.04, c.z + sz + 1.8),
+      V(c.x - sx - 1.8, by + 0.04, c.z + sz + 1.8),
+      rgba(INK, 0.09 * a),
       null,
       0
     );
+
     const x = s.x / 2,
       y = s.y / 2,
       z = s.z / 2;
@@ -265,44 +268,78 @@ export class Cinema {
       V(c.x + x, c.y + y, c.z + z),
       V(c.x - x, c.y + y, c.z + z),
     ];
-    const e = rgba(INK, (edge == null ? 0.34 : edge) * a);
+    const e = rgba(INK, (edge == null ? 0.38 : edge) * a);
     for (let i = 0; i < 6; i++) {
       const n = FN[i];
       const fc = V(c.x + n.x * x, c.y + n.y * y, c.z + n.z * z);
       if (dot(n, sub(this.eye, fc)) <= 0) continue;
       const corners: [V3, V3, V3, V3] = [P[FT[i][0]], P[FT[i][1]], P[FT[i][2]], P[FT[i][3]]];
-      // Side faces (not top/bottom) get a soft vertical light gradient — top
-      // edge catches the light, base sits a touch in its own shadow. That
-      // falloff is what reads as a lit surface instead of a flat card.
       if (i === 2 || i === 3 || i === 4 || i === 5) {
-        const top = rgba(shade(FACE_SHADE[i], 0.22), a);
-        const bottom = rgba(shade(FACE_SHADE[i], -0.1), a);
-        this._quadGrad(corners[0], corners[1], corners[2], corners[3], [top, bottom], e, 1.1);
+        // Side faces: strong gradient — bright highlight at crown, deep shadow at base
+        const topC = rgba(shade(FACE_SHADE[i], 0.32), a);
+        const botC = rgba(shade(FACE_SHADE[i], -0.22), a);
+        this._quadGrad(corners[0], corners[1], corners[2], corners[3], [topC, botC], e, 1.2);
       } else {
-        this._quad(corners[0], corners[1], corners[2], corners[3], rgba(FACE_SHADE[i], a), e, 1.1);
+        this._quad(corners[0], corners[1], corners[2], corners[3], rgba(FACE_SHADE[i], a), e, 1.2);
       }
     }
+    // Bright corner edge highlights — the crisp lines that read as architectural precision
+    const topY = c.y + y;
+    const botY = c.y - y;
+    const corners3D = [
+      [V(c.x - x, botY, c.z - z), V(c.x - x, topY, c.z - z)],
+      [V(c.x + x, botY, c.z - z), V(c.x + x, topY, c.z - z)],
+      [V(c.x - x, botY, c.z + z), V(c.x - x, topY, c.z + z)],
+      [V(c.x + x, botY, c.z + z), V(c.x + x, topY, c.z + z)],
+    ];
+    for (const [bot, top] of corners3D) {
+      const fb = V(bot.x - c.x, 0, bot.z - c.z);
+      if (dot(fb, sub(this.eye, c)) > 0)
+        this._line(bot, top, rgba("255,255,255", 0.55 * a), 1.4);
+    }
+    // Crown edge — bright top perimeter line, the "cornice" that anchors shape
+    this._line(P[3], P[2], rgba("255,255,255", 0.7 * a), 1.5);
+    this._line(P[7], P[6], rgba("255,255,255", 0.4 * a), 1.5);
+    this._line(P[3], P[7], rgba("255,255,255", 0.5 * a), 1.5);
+    this._line(P[2], P[6], rgba("255,255,255", 0.4 * a), 1.5);
   }
 
   private _mass(cx: number, cz: number, w: number, d: number, h: number, a: number, floors?: number): void {
     this._solid(V(cx, h / 2, cz), V(w, h, d), a);
-    const n = floors == null ? Math.max(2, Math.round(h / 5)) : floors;
+    const n = floors == null ? Math.max(3, Math.round(h / 4.5)) : floors;
     const frontZ = this.eye.z > cz ? 1 : -1;
     const sideX = this.eye.x > cx ? 1 : -1;
+    const faceZ = cz + frontZ * (d / 2 + 0.08);
+    const faceX = cx + sideX * (w / 2 + 0.08);
+
     for (let f = 1; f < n; f++) {
       const y = f * (h / n);
-      this._line(
-        V(cx - w / 2 + 0.8, y, cz + frontZ * (d / 2 + 0.08)),
-        V(cx + w / 2 - 0.8, y, cz + frontZ * (d / 2 + 0.08)),
-        rgba(INK, 0.15 * a),
-        1
-      );
-      this._line(
-        V(cx + sideX * (w / 2 + 0.08), y, cz - d / 2 + 0.8),
-        V(cx + sideX * (w / 2 + 0.08), y, cz + d / 2 - 0.8),
-        rgba(INK, 0.11 * a),
-        1
-      );
+      // Horizontal floor-plate line on front face
+      this._line(V(cx - w / 2 + 0.8, y, faceZ), V(cx + w / 2 - 0.8, y, faceZ), rgba(INK, 0.18 * a), 1.1);
+      // Horizontal floor-plate on side face
+      this._line(V(faceX, y, cz - d / 2 + 0.8), V(faceX, y, cz + d / 2 - 0.8), rgba(INK, 0.13 * a), 1.1);
+    }
+
+    // Vertical window-bay mullions on front face — the defining mark of a real curtain wall
+    const cols = Math.max(2, Math.round(w / 5));
+    for (let c2 = 1; c2 < cols; c2++) {
+      const wx = cx - w / 2 + c2 * (w / cols);
+      this._line(V(wx, 0.5, faceZ), V(wx, h - 0.5, faceZ), rgba(INK, 0.10 * a), 1);
+    }
+
+    // Lit window panels — a band of warm glow on upper floors (office-lit look)
+    if (h > 14 && n > 3) {
+      const winY0 = h * 0.45;
+      const winY1 = h * 0.85;
+      for (let c2 = 0; c2 < cols - 1; c2++) {
+        const wx0 = cx - w / 2 + c2 * (w / cols) + 1;
+        const wx1 = wx0 + w / cols - 2;
+        this._quad(
+          V(wx0, winY0, faceZ), V(wx1, winY0, faceZ),
+          V(wx1, winY1, faceZ), V(wx0, winY1, faceZ),
+          rgba(BLUEL, 0.13 * a), null, 0
+        );
+      }
     }
   }
 
@@ -453,41 +490,59 @@ export class Cinema {
       }
     }
 
-    this._text(V(x, 30, z + 26), D.label, 11, rgba(INK, 0.5 * a));
+    this._text(V(x, 30, z + 26), D.label, 11, rgba(INK, 0.32 * a));
   }
 
   private _tower(a: number, live: number): void {
     let i: number;
-    this._solid(V(0, 2, 0), V(48, 4, 48), a);
-    this._solid(V(0, 6.5, 0), V(36, 5, 36), a);
+    // Wide podium base — two stepped slabs
+    this._solid(V(0, 2, 0), V(52, 4, 52), a);
+    this._solid(V(0, 6.5, 0), V(40, 5, 40), a);
 
-    let y = 9,
+    let y = 11,
       w = 27;
     const fz = this.eye.z > 0 ? 1 : -1;
     for (i = 0; i < 5; i++) {
       const h = 9.4 - i * 0.7;
       this._solid(V(0, y + h / 2, 0), V(w, h, w), a);
+      // Vertical mullions on front face
       for (let m = 1; m < 4; m++) {
         const mx = -w / 2 + m * (w / 4);
-        this._line(V(mx, y + 0.7, fz * (w / 2 + 0.08)), V(mx, y + h - 0.7, fz * (w / 2 + 0.08)), rgba(INK, 0.2 * a), 1.1);
+        this._line(V(mx, y + 0.6, fz * (w / 2 + 0.08)), V(mx, y + h - 0.6, fz * (w / 2 + 0.08)), rgba(INK, 0.18 * a), 1.2);
       }
+      // Lit floor band — thin bright stripe at each setback cornice
+      this._line(
+        V(-w / 2, y + h, fz * (w / 2 + 0.05)),
+        V(w / 2, y + h, fz * (w / 2 + 0.05)),
+        rgba("220,232,255", (0.7 + live * 0.3) * a), 1.8
+      );
       y += h;
       w -= 3.6;
     }
 
+    // Mechanical crown cap
     this._solid(V(0, y + 1.5, 0), V(w + 4, 3, w + 4), a);
-    this._line(V(0, y + 3, 0), V(0, y + 17, 0), rgba(INK, 0.4 * a), 1.6);
-    this._dot(V(0, y + 17, 0), 1.9, rgba(BLUE, (0.4 + live * 0.6) * a));
+    // Antenna spire
+    this._line(V(0, y + 3, 0), V(0, y + 20, 0), rgba(INK, 0.45 * a), 1.8);
+    // Beacon at tip — pulses brighter when live
+    this._dot(V(0, y + 20, 0), 2.4, rgba(BLUE, (0.5 + live * 0.5) * a));
+    if (live > 0.3) {
+      // Outer halo ring at beacon when system is active
+      this._dot(V(0, y + 20, 0), 4.5, rgba(BLUE, 0.18 * live * a));
+    }
 
+    // ADRIG logomark chevron on front facade
     const mz = fz * 13.9;
-    this._line(V(-5, 30, mz), V(0, 39.6, mz), rgba(BLUE, 0.92 * a), 3);
-    this._line(V(0, 39.6, mz), V(5, 30, mz), rgba(BLUE, 0.92 * a), 3);
-    this._line(V(-2.7, 33.4, mz), V(2.7, 33.4, mz), rgba(BLUEL, 0.92 * a), 3);
+    this._line(V(-5, 30, mz), V(0, 39.6, mz), rgba(BLUE, (0.8 + live * 0.2) * a), 3.2);
+    this._line(V(0, 39.6, mz), V(5, 30, mz), rgba(BLUE, (0.8 + live * 0.2) * a), 3.2);
+    this._line(V(-2.7, 33.4, mz), V(2.7, 33.4, mz), rgba(BLUEL, (0.7 + live * 0.3) * a), 3);
 
+    // Rising data-flow particles — visible once system is live
     if (live > 0.01) {
-      for (i = 0; i < 14; i++) {
-        const ph = (this.t * 2.4 + i / 14) % 1;
-        this._dot(V(0, 4 + ph * 44, 0), 1.5 - ph * 0.5, rgba(BLUE, (1 - ph) * 0.75 * live));
+      for (i = 0; i < 18; i++) {
+        const ph = (this.t * 2.8 + i / 18) % 1;
+        const sz2 = 1.8 - ph * 0.9;
+        this._dot(V(0, 6 + ph * 52, 0), sz2, rgba(BLUE, (1 - ph) * 0.8 * live));
       }
     }
   }
@@ -564,10 +619,6 @@ export class Cinema {
     const towerIn = ease(range(t, 0.26, 0.46));
     if (towerIn > 0.002) this._tower(clamp(towerIn * 2.6, 0, 1), live);
 
-    // Route lines only — the travelling signal itself is now a message bubble
-    // (DOM layer, driven from Hero.tsx via districtArcPoint + projectWorld),
-    // not a looping dot, so there's exactly one clear event per district
-    // instead of an ambient pulse that never resolves into anything.
     const flow = ease(range(t, 0.5, 0.7));
     if (flow > 0.002) {
       for (i = 0; i < DISTRICTS.length; i++) {

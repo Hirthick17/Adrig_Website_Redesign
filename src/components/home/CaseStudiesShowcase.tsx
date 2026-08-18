@@ -7,6 +7,7 @@ import { LayoutGrid } from "../ui/layout-grid";
 import { InteractiveHoverButton } from "@/registry/magicui/interactive-hover-button";
 import { WORK_ITEMS } from "@/lib/site-data";
 
+
 const CASE_STUDY_ASSETS = [
   {
     keywords: ["rail", "railway", "train", "metro", "transport"],

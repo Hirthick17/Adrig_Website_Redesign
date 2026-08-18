@@ -36,15 +36,7 @@ export const HERO_STORY_BEATS = [
     accent: "and business.",
     body: "Enterprise systems, data architecture and workflow — assembled as one structure rather than bolted together.",
     in: [0.2, 0.28] as [number, number],
-    out: [0.33, 0.4] as [number, number],
-  },
-  {
-    eyebrow: "04 — Transformation",
-    heading: "Disconnected work becomes ",
-    accent: "one system.",
-    body: "Broken handoffs merge. Workflows synchronise. The people stay — the friction doesn't.",
-    in: [0.56, 0.64] as [number, number],
-    out: [0.72, 0.79] as [number, number],
+    out: [0.38, 0.46] as [number, number],
   },
 ];
 

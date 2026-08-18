@@ -74,7 +74,7 @@ export const LayoutGrid: React.FC<LayoutGridProps> = ({ cards }) => {
 
               {/* Transparent illustration */}
               <img
-                src={card.thumbnail}
+                src={encodeURI(card.thumbnail)}
                 alt=""
                 className="
                   absolute

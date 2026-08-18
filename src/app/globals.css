@@ -194,22 +194,27 @@ body {
   display: block;
 }
 
-/* Scrim: the copy column sits over a working city, so it needs a floor — a
-   wash that keeps type legible without dimming the art underneath it. */
+/* Scrim: protected text column on the left — strong enough to guarantee
+   legibility of every letterform, but the illustration stays visible at right.
+   The gradient stops at 55 vw so the city is fully visible in its right half. */
 .hero-scrim {
   position: absolute;
   inset: 0;
   z-index: 2;
   pointer-events: none;
   background: linear-gradient(90deg,
-    rgba(247, 249, 252, .97) 0%, rgba(247, 249, 252, .93) 26%,
-    rgba(247, 249, 252, .62) 44%, rgba(247, 249, 252, 0) 62%);
+    rgba(247, 249, 252, .99) 0%,
+    rgba(247, 249, 252, .97) 22%,
+    rgba(247, 249, 252, .88) 38%,
+    rgba(247, 249, 252, .52) 50%,
+    rgba(247, 249, 252, .10) 60%,
+    rgba(247, 249, 252, 0)   68%);
 }
 @media (max-width: 900px) {
   .hero-scrim {
     background: linear-gradient(180deg,
-      rgba(247, 249, 252, .96) 0%, rgba(247, 249, 252, .92) 46%,
-      rgba(247, 249, 252, .46) 70%, rgba(247, 249, 252, .9) 100%);
+      rgba(247, 249, 252, .97) 0%, rgba(247, 249, 252, .94) 46%,
+      rgba(247, 249, 252, .50) 70%, rgba(247, 249, 252, .94) 100%);
   }
 }
 
@@ -229,7 +234,8 @@ body {
   position: absolute;
   left: clamp(22px, 4vw, 64px);
   top: 50%;
-  width: min(560px, 46vw);
+  /* Hard cap at 55 vw — the illustration must not enter this column */
+  width: min(600px, 52vw);
   opacity: 0;
   visibility: hidden;
   will-change: transform, opacity, filter;
@@ -238,20 +244,46 @@ body {
   .hero-tb { left: 0; right: 0; width: auto; padding: 0 26px; text-align: center; }
 }
 
+/* Eyebrow label — quiet brand credential above the display type */
+.hero-tb__eyebrow-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--color-adrig-blue);
+  opacity: .82;
+}
+.hero-tb__eyebrow-label::before {
+  content: '';
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  background: currentColor;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
 .hero-tb h2 {
   margin: 0;
   font-size: clamp(28px, 4.2vw, 58px);
   font-weight: 300;
-  letter-spacing: -.04em;
-  line-height: 1.05;
+  /* Tighter tracking at display size, tighter line-height = less collision */
+  letter-spacing: -.048em;
+  line-height: 1.06;
   color: var(--color-adrig-ink);
 }
+/* Only <b> inside h2 carries deliberate emphasis — one point, not three */
 .hero-tb h2 b { font-weight: 500; }
 .hero-tb p {
   margin: 18px 0 0;
-  max-width: 44ch;
-  font-size: clamp(14.5px, 1.4vw, 18px);
-  line-height: 1.62;
+  /* Narrowed measure: ~65-70 chars per line max */
+  max-width: 40ch;
+  font-size: clamp(14.5px, 1.4vw, 17.5px);
+  line-height: 1.58;
   color: var(--color-adrig-muted);
 }
 @media (max-width: 900px) {
@@ -302,8 +334,8 @@ body {
   left: 0;
   top: 0;
   z-index: 7;
-  width: 340px;
-  max-width: min(340px, 78vw);
+  width: 200px;
+  max-width: min(220px, 78vw);
   padding: 18px 22px 20px;
   border-radius: 18px;
   background: var(--color-adrig-blue);
@@ -322,7 +354,7 @@ body {
   color: rgba(255, 255, 255, .78);
 }
 .hero-bubble__text {
-  font-size: 16.5px;
+  font-size: 13px;
   font-weight: 600;
   line-height: 1.42;
   color: #ffffff;
@@ -343,25 +375,59 @@ body {
   pointer-events: none;
 }
 .hero-final .shell { width: 100%; }
-.hero-final__in { max-width: min(760px, 56vw); }
+/* Final state: constrained to the same protected text column as the beats */
+.hero-final__in { max-width: min(680px, 52vw); }
 @media (max-width: 900px) {
   .hero-final__in { max-width: 100%; text-align: center; }
 }
+
+/* Eyebrow above the permanent headline */
+.hero-final__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--color-adrig-blue);
+  opacity: .82;
+  will-change: transform, opacity;
+}
+.hero-final__eyebrow::before {
+  content: '';
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  background: currentColor;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
 .hero-final h1 {
   margin: 0;
   font-size: clamp(30px, 5vw, 68px);
   font-weight: 300;
-  letter-spacing: -.042em;
-  line-height: 1.04;
+  /* Consistent tracking + tighter leading = physically smaller footprint */
+  letter-spacing: -.048em;
+  line-height: 1.06;
   color: var(--color-adrig-ink);
   will-change: transform, opacity;
 }
+/* Single deliberate emphasis: only the accent word/phrase */
 .hero-final h1 b { font-weight: 500; }
+.hero-final h1 em {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--color-adrig-blue);
+}
 .hero-final__sub {
-  margin-top: 26px;
-  max-width: 48ch;
-  font-size: clamp(15px, 1.5vw, 19px);
-  line-height: 1.62;
+  margin-top: 24px;
+  /* Narrower measure for reading comfort */
+  max-width: 42ch;
+  font-size: clamp(15px, 1.4vw, 18px);
+  line-height: 1.58;
   color: var(--color-adrig-muted);
   will-change: transform, opacity;
 }

@@ -113,8 +113,15 @@ export default function Hero() {
     }
 
     const f0 = 0.84;
+    // eyebrow (index 3) fades in just before the h1, so the eye lands on it first
+    const eyebrowEl = finalRefs.current[3];
+    if (eyebrowEl) {
+      const fev = ease(range(t, f0 - 0.02, f0 + 0.06));
+      eyebrowEl.style.opacity = String(fev);
+      eyebrowEl.style.transform = `translateY(${((1 - fev) * 18).toFixed(1)}px)`;
+    }
     finalRefs.current.forEach((el, k) => {
-      if (!el) return;
+      if (!el || k === 3) return; // 3 handled above
       const fv = ease(range(t, f0 + k * 0.035, f0 + 0.1 + k * 0.035));
       el.style.opacity = String(fv);
       el.style.transform = `translateY(${((1 - fv) * 26).toFixed(1)}px)`;
@@ -275,7 +282,7 @@ export default function Hero() {
 
       <div className="hero-type">
         <div className="shell">
-          {HERO_STORY_BEATS.map((b, i) => (
+                {HERO_STORY_BEATS.map((b, i) => (
             <div
               key={b.eyebrow}
               ref={(el) => {
@@ -283,6 +290,8 @@ export default function Hero() {
               }}
               className="hero-tb"
             >
+              {/* Quiet brand credential line — gives eye an entry point before the big type */}
+              <div className="hero-tb__eyebrow-label">AI · Automation · Software · Data</div>
               <div className="hero-tb__eyebrow">{b.eyebrow}</div>
               <h2>
                 {b.heading}
@@ -319,15 +328,27 @@ export default function Hero() {
       <div className="hero-final">
         <div className="shell">
           <div className="hero-final__in">
+            {/* Eyebrow — same rhythm as the story beats */}
+            <div
+              ref={(el) => {
+                finalRefs.current[3] = el;
+              }}
+              className="hero-final__eyebrow"
+              style={{ opacity: 0 }}
+            >
+              AI · Automation · Software · Data
+            </div>
             <h1
               ref={(el) => {
                 finalRefs.current[0] = el;
               }}
               style={{ opacity: 0 }}
             >
-              {HERO_COPY.headline} <b>{HERO_COPY.headlineAccent}</b>
+              {/* Line 1: both words same weight — no accidental bold */}
+              Engineering Intelligent Systems
               <br />
-              {HERO_COPY.headlineLine2}
+              {/* Line 2: regular except the single meaning-carrying word */}
+              For Businesses That Want To <em>Evolve.</em>
             </h1>
             <p
               className="hero-final__sub"
@@ -373,7 +394,8 @@ export default function Hero() {
         ))}
       </nav>
 
-      {/* Floating single-click / visual cue scroll down button */}
+      {/* Scroll cue — bottom-left, under the protected text column
+           so it never overlaps the LOGISTICS & TRANSPORT district label */}
       <button
         type="button"
         onClick={() => {

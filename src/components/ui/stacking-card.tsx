@@ -129,23 +129,12 @@ const SERVICE_STORIES: ServiceStory[] = [
 
   {
     match: [
-      "data analysis",
-      "predictive analytics",
-      "analytics",
-    ],
-
-    image:
-      "/visuals/services/meme-posters/06-data-analysis.png",
-
-    hook:
-      "The insight is definitely here somewhere.",
-
-    imagePosition:
-      "50% 45%",
-  },
-
-  {
-    match: [
+      "artificial intelligence & ml",
+      "artificial intelligence",
+      "machine learning",
+      "ai & ml",
+      "ai/ml",
+      "ai-ml",
       "ai consultation",
       "consultation",
       "consulting",
@@ -159,6 +148,42 @@ const SERVICE_STORIES: ServiceStory[] = [
 
     imagePosition:
       "50% 44%",
+  },
+
+  {
+    match: [
+      "data engineering",
+      "data pipeline",
+      "pipeline",
+      "etl",
+      "data architecture",
+    ],
+
+    image:
+      "/visuals/services/meme-posters/06-data-analysis.png",
+
+    hook:
+      "The pipeline ran successfully. Finding the data is a different story.",
+
+    imagePosition:
+      "50% 45%",
+  },
+
+  {
+    match: [
+      "data analysis",
+      "predictive analytics",
+      "analytics",
+    ],
+
+    image:
+      "/visuals/services/meme-posters/06-data-analysis.png",
+
+    hook:
+      "The insight is definitely here somewhere.",
+
+    imagePosition:
+      "50% 45%",
   },
 
   {
