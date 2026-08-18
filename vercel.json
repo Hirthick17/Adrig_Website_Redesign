@@ -1,10 +1,9 @@
 {
-  "projectName": "adrig-next",
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "outputDirectory": ".next",
-  "public": false,
   "regions": ["sfo1"],
   "functions": {
     "api/**/*.ts": {
@@ -22,17 +21,5 @@
       "main": true,
       "staging": true
     }
-  },
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/.*",
-      "dest": "$1"
-    }
-  ]
+  }
 }
