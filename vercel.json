@@ -1,19 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "nextjs",
-  "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
-  "outputDirectory": ".next",
-  "regions": ["sfo1"],
-  "functions": {
-    "api/**/*.ts": {
-      "maxDuration": 60
-    }
-  },
-  "git": {
-    "deploymentEnabled": {
-      "main": true,
-      "staging": true
-    }
-  }
+  "framework": "nextjs"
 }
