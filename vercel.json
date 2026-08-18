@@ -10,9 +10,6 @@
       "maxDuration": 60
     }
   },
-  "env": {
-    "NEXT_PUBLIC_SITE_URL": "@adrig-next-site-url"
-  },
   "git": {
     "deploymentEnabled": {
       "main": true,
