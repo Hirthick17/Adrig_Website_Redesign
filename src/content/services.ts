@@ -89,18 +89,14 @@ export const chatbotService: ServiceConfig = {
   slug: "chatbot-development",
   aliases: ["chatbot"],
   heroImages: [
-    "/services/chatbot-hero/ChatGPT Image Aug 16, 2026, 07_34_19 PM.png",
-    "/services/chatbot-hero/ChatGPT Image Aug 16, 2026, 07_48_53 PM (1).png",
-    "/services/chatbot-hero/ChatGPT Image Aug 16, 2026, 07_48_53 PM (2).png",
-    "/services/chatbot-hero/ChatGPT Image Aug 16, 2026, 07_48_53 PM (3).png",
-    "/services/chatbot-hero/ChatGPT Image Aug 16, 2026, 07_48_53 PM (4).png",
-    "/services/chatbot-hero/ChatGPT Image Aug 16, 2026, 07_48_53 PM (5).png",
+    "/images/chatbot posters/chatbot-meme-01-repetitive-faq-2x3.png",
+    "/images/chatbot posters/chatbot-meme-02-understands-but-cant-act-2x3.png",
+    "/images/chatbot posters/chatbot-meme-03-chatbot-support-team-2x3.png",
   ],
   problemImages: [
-    "/services/chatbot-hero/ChatGPT Image Aug 16, 2026, 07_34_19 PM.png",
-    "/services/chatbot-hero/ChatGPT Image Aug 16, 2026, 07_48_53 PM (1).png",
-    "/services/chatbot-hero/ChatGPT Image Aug 16, 2026, 07_48_53 PM (2).png",
-    "/services/chatbot-hero/ChatGPT Image Aug 16, 2026, 07_48_53 PM (3).png",
+    "/images/chatbot posters/chatbot-meme-01-repetitive-faq-2x3.png",
+    "/images/chatbot posters/chatbot-meme-02-understands-but-cant-act-2x3.png",
+    "/images/chatbot posters/chatbot-meme-03-chatbot-support-team-2x3.png",
   ],
   hero: {
     eyebrow: "Chatbot Development",
@@ -200,8 +196,16 @@ export const llmService: ServiceConfig = {
   key: "llm",
   slug: "generative-ai-solutions",
   aliases: ["generative-ai", "llm-development", "llm"],
-  heroImages: [ACE.globe, ACE.mesh, ACE.hero2, ACE.kbd, ACE.hero1, ACE.hero3],
-  problemImages: [ACE.hero2, ACE.globe, ACE.hero3, ACE.mesh],
+  heroImages: [
+    "/images/generative-ai-01.png",
+    "/images/generative-ai-02.png",
+    "/images/generative-ai-03.png",
+  ],
+  problemImages: [
+    "/images/generative-ai-01.png",
+    "/images/generative-ai-02.png",
+    "/images/generative-ai-03.png",
+  ],
   hero: {
     eyebrow: "Generative AI & LLM Systems",
     title: "Language systems built around",
@@ -270,13 +274,13 @@ export const llmService: ServiceConfig = {
       title: "Financial Audit & Clause Extraction",
       description: "Parse multi-hundred-page loan covenants and flag covenant breach risks automatically.",
       impact: "90% faster compliance reviews",
-      image: "/services/LLM_Development.png",
+      image: "/images/services/generative-ai.png",
     },
     {
       title: "Clinical Protocol Assistant",
       description: "Assist healthcare practitioners in retrieving treatment protocols grounded in medical journals.",
       impact: "100% auditable citation links",
-      image: "/services/remove_bg/ChatGPT Image Aug 11, 2026, 07_43_45 PM (2).png",
+      image: "/images/generative-ai-02.png",
     },
   ],
   proof: {
@@ -294,8 +298,16 @@ export const aiAutomationService: ServiceConfig = {
   key: "ai-automation",
   slug: "ai-automation",
   aliases: ["ai-automation"],
-  heroImages: [ACE.kbd, ACE.hero3, ACE.mesh, ACE.hero1, ACE.globe, ACE.hero2],
-  problemImages: [ACE.hero3, ACE.kbd, ACE.hero1, ACE.mesh],
+  heroImages: [
+    "/images/ai-automations-01.png",
+    "/images/ai-automations-02.png",
+    "/images/ai-automations-03.png",
+  ],
+  problemImages: [
+    "/images/ai-automations-01.png",
+    "/images/ai-automations-02.png",
+    "/images/ai-automations-03.png",
+  ],
   hero: {
     eyebrow: "AI Automation",
     title: "Intelligent agent swarms built for",
@@ -364,13 +376,13 @@ export const aiAutomationService: ServiceConfig = {
       title: "Automated Accounts Payable Processing",
       description: "Extract line items from 5,000+ monthly vendor invoices and auto-reconcile with purchase orders.",
       impact: "82% reduction in processing cost",
-      image: "/services/Ai_Automation.png",
+      image: "/images/services/ai-automation.png",
     },
     {
       title: "Insurance Claims Triage & Fraud Check",
       description: "Auto-review medical bills, police reports, and damage photos for fraud indicators.",
       impact: "Claims settlement down from 6 days to 4 hours",
-      image: "/services/remove_bg/ChatGPT Image Aug 11, 2026, 07_43_44 PM (1).png",
+      image: "/images/ai-automations-02.png",
     },
   ],
   proof: {
@@ -388,8 +400,16 @@ export const workflowService: ServiceConfig = {
   key: "workflow",
   slug: "workflow-automation",
   aliases: ["workflow-automations", "workflow-automation"],
-  heroImages: [ACE.hero1, ACE.kbd, ACE.globe, ACE.mesh, ACE.hero3, ACE.hero2],
-  problemImages: [ACE.mesh, ACE.hero1, ACE.kbd, ACE.hero2],
+  heroImages: [
+    "/images/workflow-automations-01.png",
+    "/images/workflow-automations-02.png",
+    "/images/workflow-automations-03.png",
+  ],
+  problemImages: [
+    "/images/workflow-automations-01.png",
+    "/images/workflow-automations-02.png",
+    "/images/workflow-automations-03.png",
+  ],
   hero: {
     eyebrow: "Workflow Automation",
     title: "Connecting fragmented tools into",
@@ -458,13 +478,13 @@ export const workflowService: ServiceConfig = {
       title: "Multi-Zone Railway Block Operations",
       description: "Real-time coordination between station masters, track managers, and central dispatch.",
       impact: "Reduced operational train hold delays by 42%",
-      image: "/services/Workflow_Automation.png",
+      image: "/images/services/workflow-automation.png",
     },
     {
       title: "Automated Supply Chain Reordering",
       description: "Trigger manufacturer purchase orders automatically when warehouse stock drops below safety buffers.",
       impact: "Zero stockouts across 18 regional hubs",
-      image: "/services/remove_bg/ChatGPT Image Aug 11, 2026, 07_43_47 PM (6).png",
+      image: "/images/workflow-automations-02.png",
     },
   ],
   proof: {
@@ -482,8 +502,16 @@ export const dataAnalysisService: ServiceConfig = {
   key: "data-analysis",
   slug: "predictive-analytics",
   aliases: ["data-analysis", "data-engineering", "data-analysis-predictive-analytics"],
-  heroImages: [ACE.hero2, ACE.mesh, ACE.hero1, ACE.globe, ACE.kbd, ACE.hero3],
-  problemImages: [ACE.globe, ACE.hero2, ACE.mesh, ACE.hero1],
+  heroImages: [
+    "/images/data-predictive-analysis-01.png",
+    "/images/data-predictive-analysis-02.png",
+    "/images/data-predictive-analysis-03.png",
+  ],
+  problemImages: [
+    "/images/data-predictive-analysis-01.png",
+    "/images/data-predictive-analysis-02.png",
+    "/images/data-predictive-analysis-03.png",
+  ],
   hero: {
     eyebrow: "Data Intelligence & Analytics",
     title: "Transforming raw operational noise into",
@@ -552,13 +580,13 @@ export const dataAnalysisService: ServiceConfig = {
       title: "Predictive Train Track Maintenance",
       description: "Analyze vibration and heat sensor feeds along rail corridors to schedule proactive repairs.",
       impact: "72 hours advance failure warning",
-      image: "/services/Data_Analysis_Section.png",
+      image: "/images/services/data-predictive-analysis.png",
     },
     {
       title: "Real-Time Retail Revenue Forecasting",
       description: "Aggregate point-of-sale data across 200+ stores with dynamic inventory allocation.",
       impact: "18% reduction in inventory holding costs",
-      image: "/services/remove_bg/ChatGPT Image Aug 11, 2026, 07_43_45 PM (3).png",
+      image: "/images/data-predictive-analysis-02.png",
     },
   ],
   proof: {
@@ -576,8 +604,16 @@ export const softwareService: ServiceConfig = {
   key: "software",
   slug: "software-development",
   aliases: ["software", "software-engineering"],
-  heroImages: [ACE.kbd, ACE.hero1, ACE.hero3, ACE.mesh, ACE.hero2, ACE.globe],
-  problemImages: [ACE.hero3, ACE.kbd, ACE.hero2, ACE.globe],
+  heroImages: [
+    "/images/software posters/software-meme-01-less-chaos.png",
+    "/images/software posters/software-meme-02-small-change.png",
+    "/images/software posters/software-meme-03-maintenance-firefighter.png",
+  ],
+  problemImages: [
+    "/images/software posters/software-meme-01-less-chaos.png",
+    "/images/software posters/software-meme-02-small-change.png",
+    "/images/software posters/software-meme-03-maintenance-firefighter.png",
+  ],
   hero: {
     eyebrow: "Software Engineering",
     title: "Custom SaaS platforms built for",
@@ -646,13 +682,13 @@ export const softwareService: ServiceConfig = {
       title: "Enterprise Billing & Invoice Engine",
       description: "Multi-currency SaaS billing platform processing recurring subscriptions and automated GST invoices.",
       impact: "Processed $14M+ in annual transactions",
-      image: "/services/SoftwareDevelopment.png",
+      image: "/images/services/software-development.png",
     },
     {
       title: "Fleet & Asset Telemetry Dashboard",
       description: "Real-time interactive GPS and sensor mapping platform tracking industrial transport assets.",
       impact: "Sub-second live map updates for 2,400+ vehicles",
-      image: "/services/remove_bg/ChatGPT Image Aug 11, 2026, 07_43_47 PM (6).png",
+      image: "/images/software posters/software-meme-02-small-change.png",
     },
   ],
   proof: {
@@ -669,9 +705,17 @@ export const softwareService: ServiceConfig = {
 export const consultationService: ServiceConfig = {
   key: "consultation",
   slug: "ai-ml-development",
-  aliases: ["consultation", "ai-consultation", "blockchain"],
-  heroImages: [ACE.globe, ACE.hero2, ACE.mesh, ACE.hero1, ACE.kbd, ACE.hero3],
-  problemImages: [ACE.hero1, ACE.globe, ACE.mesh, ACE.hero3],
+  aliases: ["consultation", "ai-consultation", "ai-ml"],
+  heroImages: [
+    "/images/ai-ml-01.png",
+    "/images/ai-ml-02.png",
+    "/images/ai-ml-03.png",
+  ],
+  problemImages: [
+    "/images/ai-ml-01.png",
+    "/images/ai-ml-02.png",
+    "/images/ai-ml-03.png",
+  ],
   hero: {
     eyebrow: "AI Consultation & Strategy",
     title: "Turning vague AI ambition into",
@@ -740,13 +784,13 @@ export const consultationService: ServiceConfig = {
       title: "Enterprise AI Readiness & Strategy",
       description: "Complete architectural review and technology selection for an international logistics provider.",
       impact: "Saved estimated $340k in misguided tooling purchases",
-      image: "/services/Ai_consultation.png",
+      image: "/images/services/ai-ml.png",
     },
     {
       title: "Security & Sovereignty Review",
       description: "Audit compliance requirements for deploying proprietary LLMs in regulated financial environments.",
       impact: "Approved for production air-gapped deployment",
-      image: "/services/remove_bg/ChatGPT Image Aug 11, 2026, 07_43_46 PM (4).png",
+      image: "/images/ai-ml-02.png",
     },
   ],
   proof: {
@@ -754,6 +798,210 @@ export const consultationService: ServiceConfig = {
     label: "Tooling Budget Saved",
     description: "Upfront architecture audit prevented premature cloud compute purchases and lock-in.",
     client: "Enterprise Logistics Client",
+  },
+};
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   8. Blockchain & Smart Contract Engineering
+───────────────────────────────────────────────────────────────────────────── */
+export const blockchainService: ServiceConfig = {
+  key: "blockchain",
+  slug: "blockchain",
+  aliases: ["blockchain-development", "web3", "smart-contracts"],
+  heroImages: [
+    "/images/blockchain-01.png",
+    "/images/blockchain-02.png",
+    "/images/blockchain-03.png",
+  ],
+  problemImages: [
+    "/images/blockchain-01.png",
+    "/images/blockchain-02.png",
+    "/images/blockchain-03.png",
+  ],
+  hero: {
+    eyebrow: "Blockchain & Smart Contracts",
+    title: "Permissioned distributed ledgers built for",
+    emphasis: "tamper-proof operational trust.",
+    description:
+      "Enterprise blockchain networks, auditable smart contract automation, and cryptographic settlement systems designed for verifiable multi-party workflows.",
+    primaryCta: "Discuss blockchain architecture",
+  },
+  problem: {
+    title: "Multi-party operational agreements suffer from lack of verified provenance.",
+    description:
+      "When external vendors, logistics carriers, and finance teams maintain disparate databases, settling disputes takes weeks of costly manual audits.",
+    steps: [
+      {
+        title: "Disputed reconciliation ledgers",
+        description: "Counterparties maintain conflicting records, causing prolonged settlement freezes.",
+        visualState: "dispute",
+      },
+      {
+        title: "Vulnerable intermediary risk",
+        description: "Centralized third-party intermediaries add fees, latency, and single points of failure.",
+        visualState: "intermediary",
+      },
+      {
+        title: "Cryptographic consensus automation",
+        description: "Smart contracts execute settlements autonomously upon verified state transitions.",
+        visualState: "consensus",
+      },
+    ],
+  },
+  capabilities: [
+    {
+      id: "smart_contracts",
+      title: "Audited Smart Contract Development",
+      description: "Formal verification and security-audited Solidity / Rust smart contracts.",
+      outcome: "Deterministic execution of contractual clauses with zero human tampering.",
+      metrics: "100% formal test coverage",
+    },
+    {
+      id: "permissioned_ledgers",
+      title: "Enterprise Permissioned Networks",
+      description: "Hyperledger Besu / Polygon Supernets configured for compliant multi-stakeholder consortiums.",
+      outcome: "High-throughput, private blockchain infrastructure with customizable access control.",
+      metrics: "< 1s finality time",
+    },
+    {
+      id: "tokenization",
+      title: "Asset Tokenization & Settlement",
+      description: "Tokenize real-world assets (RWA) and automate instant cross-border treasury settlements.",
+      outcome: "Drastic liquidity optimization and automated audit compliance.",
+      metrics: "Instant atomic settlement",
+    },
+  ],
+  architecture: {
+    title: "From transaction event to immutable consensus commit.",
+    nodes: [
+      { id: "tx_submit", label: "Signed Payload", description: "Cryptographically signed client transaction" },
+      { id: "mempool", label: "Consensus Layer", description: "IBFT 2.0 / PoS validator verification" },
+      { id: "evm", label: "Smart Contract Engine", description: "State transition & rule verification" },
+      { id: "state", label: "State Trie", description: "Merkle-Patricia cryptographic state commit" },
+      { id: "indexer", label: "Enterprise Subgraph", description: "Real-time indexer for ERP integration" },
+    ],
+  },
+  useCases: [
+    {
+      title: "Multi-Carrier Supply Chain Provenance",
+      description: "Track pharmaceutical cold-chain sensor data on an immutable distributed ledger.",
+      impact: "Zero counterfeit or compromised batch disputes",
+      image: "/images/blockchain-01.png",
+    },
+    {
+      title: "Automated Royalty & Escrow Settlement",
+      description: "Release vendor escrow payments automatically when milestone delivery webhooks fire.",
+      impact: "Reduced dispute resolution cycle from 28 days to instantaneous",
+      image: "/images/blockchain-02.png",
+    },
+  ],
+  proof: {
+    metric: "100%",
+    label: "Audit Integrity",
+    description: "Immutable ledger tracking compliance records across multiple independent transport carriers.",
+    client: "Global Logistics Consortium",
+  },
+};
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   9. Data Engineering & Lakehouses
+───────────────────────────────────────────────────────────────────────────── */
+export const dataEngineeringService: ServiceConfig = {
+  key: "data-engineering",
+  slug: "data-engineering",
+  aliases: ["data-engineering-solutions", "lakehouse"],
+  heroImages: [
+    "/images/data-engineering-01.png",
+    "/images/data-engineering-02.png",
+    "/images/data-engineering-03.png",
+  ],
+  problemImages: [
+    "/images/data-engineering-01.png",
+    "/images/data-engineering-02.png",
+    "/images/data-engineering-03.png",
+  ],
+  hero: {
+    eyebrow: "Data Engineering",
+    title: "Streaming data pipelines built for",
+    emphasis: "high-velocity enterprise scale.",
+    description:
+      "Robust data lakehouses, distributed ETL pipelines, and real-time Kafka streams engineered for zero data loss and sub-second analytical queries.",
+    primaryCta: "Architect your data pipeline",
+  },
+  problem: {
+    title: "Fragmented pipelines break under modern enterprise ingestion velocity.",
+    description:
+      "Legacy batch ETL jobs fail silently, leaving analytics dashboards out of sync and machine learning models starved of clean data.",
+    steps: [
+      {
+        title: "Brittle pipeline failures",
+        description: "Schema mutations break overnight ETL runs without alerting data teams.",
+        visualState: "broken_pipeline",
+      },
+      {
+        title: "Compute cost explosion",
+        description: "Unoptimized full-table scans inflate cloud data warehouse invoices exponentially.",
+        visualState: "cost_explosion",
+      },
+      {
+        title: "Observable streaming lakehouse",
+        description: "Zero-copy columnar storage and automated schema governance ensure 99.99% pipeline reliability.",
+        visualState: "reliable_lakehouse",
+      },
+    ],
+  },
+  capabilities: [
+    {
+      id: "streaming_etl",
+      title: "Real-Time Streaming ETL",
+      description: "Apache Kafka and Spark Streaming pipelines processing gigabytes per second with zero message loss.",
+      outcome: "Analytics and AI models fed with real-time, clean data.",
+      metrics: "< 100ms end-to-end latency",
+    },
+    {
+      id: "lakehouse_arch",
+      title: "Modern Data Lakehouse Design",
+      description: "Delta Lake / Iceberg architectures combining the reliability of data warehouses with lake scalability.",
+      outcome: "Unified single source of truth for both BI reporting and ML training.",
+      metrics: "60% cloud compute cost savings",
+    },
+    {
+      id: "data_governance",
+      title: "Automated Data Governance & Lineage",
+      description: "Automated data quality assertions (Great Expectations) and end-to-end lineage tracking.",
+      outcome: "Total confidence in data correctness and regulatory compliance.",
+      metrics: "99.99% pipeline uptime",
+    },
+  ],
+  architecture: {
+    title: "From raw data ingestion to governed lakehouse consumption.",
+    nodes: [
+      { id: "ingest", label: "Source Ingestion", description: "Databases (CDC), logs, and webhook streams" },
+      { id: "kafka", label: "Kafka Event Hub", description: "Partitioned high-throughput message queue" },
+      { id: "spark", label: "Spark Transformation", description: "Schema validation & deduplication" },
+      { id: "iceberg", label: "Iceberg Lakehouse", description: "Columnar Parquet storage with time-travel" },
+      { id: "query", label: "Trino / ClickHouse", description: "Sub-second SQL query engine for BI/AI" },
+    ],
+  },
+  useCases: [
+    {
+      title: "High-Throughput IoT Telemetry Pipeline",
+      description: "Ingest and process 40,000 sensor telemetry messages per second from industrial machinery.",
+      impact: "Zero message loss with 90ms query response",
+      image: "/images/services/data-engineering.png",
+    },
+    {
+      title: "Real-Time Financial Transaction Aggregator",
+      description: "Unified CDC pipeline synchronizing 12 regional core-banking databases into a central lakehouse.",
+      impact: "Replaced 6-hour batch jobs with sub-minute continuous sync",
+      image: "/images/data-engineering-02.png",
+    },
+  ],
+  proof: {
+    metric: "40k/s",
+    label: "Ingestion Rate",
+    description: "Distributed streaming pipeline running continuous ingestion with sub-second analytical querying.",
+    client: "Industrial IoT Infrastructure",
   },
 };
 
@@ -768,6 +1016,8 @@ export const ALL_SERVICES: ServiceConfig[] = [
   dataAnalysisService,
   softwareService,
   consultationService,
+  blockchainService,
+  dataEngineeringService,
 ];
 
 export function getServiceBySlug(slug: string): ServiceConfig | undefined {

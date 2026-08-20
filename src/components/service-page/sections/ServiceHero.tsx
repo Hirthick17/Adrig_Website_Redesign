@@ -113,7 +113,7 @@ export function ServiceHero({
 
       <div className="pointer-events-none absolute left-[8%] top-[18%] h-[420px] w-[420px] rounded-full bg-[#1463FF]/[0.07] blur-[120px]" />
 
-      <div className="relative z-10 mx-auto grid min-h-svh max-w-7xl grid-cols-1 items-center gap-14 px-6 pb-20 pt-28 sm:px-8 lg:grid-cols-12 lg:gap-16 lg:px-12">
+      <div className="relative z-10 mx-auto grid min-h-svh max-w-7xl grid-cols-1 items-center gap-14 px-6 pb-20 pt-40 sm:px-8 lg:grid-cols-12 lg:gap-16 lg:px-12">
         {/* =========================
             LEFT — EDITORIAL COPY
         ========================== */}
@@ -241,7 +241,7 @@ export function ServiceHero({
         ========================== */}
 
         <div className="relative lg:col-span-7">
-          <div className="grid min-h-[560px] grid-cols-12 grid-rows-2 gap-4 sm:min-h-[650px]">
+          <div className="grid grid-cols-12 items-center gap-4 sm:gap-6">
             {/* Main dominant visual */}
 
             <motion.div
@@ -253,7 +253,7 @@ export function ServiceHero({
                 delay: 0.12,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="relative col-span-8 row-span-2 overflow-hidden rounded-[28px] border border-slate-200 bg-white"
+              className="relative col-span-7 aspect-[2/3] w-full overflow-hidden rounded-[20px] shadow-[0_20px_44px_rgba(14,92,238,0.10)] transition-transform duration-300 hover:scale-[1.01]"
             >
               <VisualImage
                 src={mainImage}
@@ -261,47 +261,48 @@ export function ServiceHero({
                 priority
                 className="h-full w-full object-cover"
               />
-
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/15 via-transparent to-transparent" />
             </motion.div>
 
-            {/* Supporting visual 1 */}
+            {/* Right stacked supporting visuals */}
+            <div className="col-span-5 flex flex-col gap-4 sm:gap-6">
+              {/* Supporting visual 1 */}
 
-            <motion.div
-              style={{ y: secondaryY }}
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                duration: 0.75,
-                delay: 0.2,
-              }}
-              className="relative col-span-4 overflow-hidden rounded-[24px] border border-slate-200 bg-white"
-            >
-              <VisualImage
-                src={secondaryImage}
-                alt={`${content.eyebrow ?? serviceKey} supporting visual`}
-                className="h-full w-full object-cover"
-              />
-            </motion.div>
+              <motion.div
+                style={{ y: secondaryY }}
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  duration: 0.75,
+                  delay: 0.2,
+                }}
+                className="relative aspect-[2/3] w-full overflow-hidden rounded-[16px] shadow-[0_16px_36px_rgba(14,92,238,0.08)] transition-transform duration-300 hover:scale-[1.01]"
+              >
+                <VisualImage
+                  src={secondaryImage}
+                  alt={`${content.eyebrow ?? serviceKey} supporting visual`}
+                  className="h-full w-full object-cover"
+                />
+              </motion.div>
 
-            {/* Supporting visual 2 */}
+              {/* Supporting visual 2 */}
 
-            <motion.div
-              style={{ y: tertiaryY }}
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                duration: 0.75,
-                delay: 0.27,
-              }}
-              className="relative col-span-4 overflow-hidden rounded-[24px] border border-slate-200 bg-[#F4F7FB]"
-            >
-              <VisualImage
-                src={tertiaryImage}
-                alt={`${content.eyebrow ?? serviceKey} secondary supporting visual`}
-                className="h-full w-full object-cover"
-              />
-            </motion.div>
+              <motion.div
+                style={{ y: tertiaryY }}
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  duration: 0.75,
+                  delay: 0.27,
+                }}
+                className="relative aspect-[2/3] w-full overflow-hidden rounded-[16px] shadow-[0_16px_36px_rgba(14,92,238,0.08)] transition-transform duration-300 hover:scale-[1.01]"
+              >
+                <VisualImage
+                  src={tertiaryImage}
+                  alt={`${content.eyebrow ?? serviceKey} secondary supporting visual`}
+                  className="h-full w-full object-cover"
+                />
+              </motion.div>
+            </div>
           </div>
 
           <div className="pointer-events-none absolute -bottom-8 -right-8 -z-10 h-[250px] w-[250px] rounded-full bg-[#1463FF]/10 blur-[80px]" />

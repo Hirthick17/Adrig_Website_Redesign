@@ -16,9 +16,9 @@ export default function Nav() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-adrig-hairline bg-adrig-bg/85 backdrop-blur-md">
-      <div className="shell flex h-[72px] items-center gap-8">
-        <Link href="/" className="flex flex-none items-center gap-2.5 font-semibold tracking-tight text-adrig-ink">
-          <span className="grid size-8 place-items-center rounded-[9px] bg-adrig-navy text-sm font-bold text-white">
+      <div className="shell flex h-[46px] items-center gap-6">
+        <Link href="/" className="flex flex-none items-center gap-2 text-sm font-semibold tracking-tight text-adrig-ink">
+          <span className="grid size-6 place-items-center rounded-[7px] bg-adrig-navy text-xs font-bold text-white">
             A
           </span>
           ADRIG
@@ -61,7 +61,7 @@ export default function Nav() {
               <Link
                 key={item.label}
                 href={item.href}
-                className="flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[14.5px] font-medium text-adrig-ink/80 transition hover:text-adrig-ink"
+                className="flex items-center gap-1 rounded-full px-2.5 py-1.5 text-[12px] font-medium text-adrig-ink/80 transition hover:text-adrig-ink"
               >
                 {item.label}
               </Link>
@@ -71,14 +71,14 @@ export default function Nav() {
 
         <Link
           href="/contact"
-          className="ml-auto hidden flex-none items-center gap-2 rounded-full bg-adrig-navy px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-adrig-blue md:inline-flex"
+          className="ml-auto hidden flex-none items-center gap-1.5 rounded-full bg-adrig-navy px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-adrig-blue md:inline-flex"
         >
           Let&apos;s Talk
         </Link>
 
         <button
           type="button"
-          className="ml-auto grid size-9 place-items-center rounded-lg border border-adrig-hairline md:hidden"
+          className="ml-auto grid size-7 place-items-center rounded-md border border-adrig-hairline md:hidden"
           onClick={() => setMobileOpen((v) => !v)}
           aria-label="Toggle menu"
         >
