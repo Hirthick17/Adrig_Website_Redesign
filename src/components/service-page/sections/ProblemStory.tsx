@@ -31,7 +31,7 @@ function ResponsiveImage({
       <img
         src={src}
         alt={alt}
-        className="h-full w-full object-cover"
+        className="h-full w-full object-contain"
       />
     );
   }
@@ -42,7 +42,7 @@ function ResponsiveImage({
       alt={alt}
       fill
       sizes="(max-width: 1024px) 100vw, 1100px"
-      className="object-cover"
+      className="object-contain"
     />
   );
 }
@@ -190,18 +190,114 @@ export function ProblemStory({
             }}
             className="shell mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-12"
           >
-            <div className="mx-auto h-[calc(100svh-150px)] max-h-[790px] min-h-[620px] max-w-[1120px] overflow-hidden rounded-[32px] border border-slate-200 bg-[#FAFCFF] shadow-[0_30px_90px_rgba(15,23,42,0.06)]">
+            <div className="mx-auto grid h-[calc(100svh-140px)] max-h-[760px] min-h-[580px] max-w-[1320px] grid-cols-1 overflow-hidden rounded-[32px] border border-[#C9D9F4] bg-white shadow-[0_30px_90px_rgba(14,92,238,0.10)] lg:grid-cols-12">
               {/* =============================================
-                  TOP IMAGE
+                  LEFT CONTENT PANEL (Brand Blue + White Text)
               ============================================== */}
+              <div className="relative flex flex-col justify-between bg-[#0E5CEE] p-8 text-white sm:p-10 lg:col-span-5 lg:p-12">
+                {/* TOP: Problem counter pill */}
+                <div>
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 backdrop-blur-sm">
+                    <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                    <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
+                      Problem {String(activeIndex + 1).padStart(2, "0")} / {String(steps.length).padStart(2, "0")}
+                    </span>
+                  </div>
+                </div>
 
-              <div className="relative h-[65%] overflow-hidden bg-[#EEF3F9]">
+                {/* MIDDLE: Animated Problem Narrative */}
+                <div className="my-auto py-6">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeStep.title}
+                      initial={{
+                        opacity: 0,
+                        x: -16,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        x: 0,
+                      }}
+                      exit={{
+                        opacity: 0,
+                        x: 16,
+                      }}
+                      transition={{
+                        duration: 0.38,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                    >
+                      <span className="font-mono text-xs font-semibold tracking-[0.2em] text-white/70">
+                        {String(activeIndex + 1).padStart(3, "0")}
+                      </span>
+
+                      <h3 className="mt-3 text-[clamp(2rem,2.8vw,3.2rem)] font-medium leading-[1.04] tracking-[-0.05em] text-white">
+                        {activeStep.title}
+                      </h3>
+
+                      <p className="mt-5 text-base leading-8 text-white/85 sm:text-lg">
+                        {activeStep.description}
+                      </p>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+
+                {/* BOTTOM: Progress bar & step switcher */}
+                <div>
+                  <div className="h-1 w-full overflow-hidden rounded-full bg-white/20">
+                    <motion.div
+                      style={{
+                        scaleX: smoothProgress,
+                        transformOrigin: "left",
+                      }}
+                      className="h-full w-full bg-white"
+                    />
+                  </div>
+
+                  <div className="mt-4 flex items-center justify-between">
+                    {steps.map((step, index) => (
+                      <button
+                        key={`${step.title}-progress`}
+                        type="button"
+                        onClick={() => {
+                          const root = storyRef.current;
+                          if (!root) return;
+                          const top = root.offsetTop;
+                          const available = root.offsetHeight - window.innerHeight;
+                          const ratio = steps.length <= 1 ? 0 : index / (steps.length - 1);
+                          window.scrollTo({
+                            top: top + available * ratio,
+                            behavior: "smooth",
+                          });
+                        }}
+                        className={`flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] transition-colors duration-300 ${
+                          index === activeIndex
+                            ? "font-bold text-white"
+                            : "text-white/50 hover:text-white"
+                        }`}
+                      >
+                        <span
+                          className={`h-1.5 w-1.5 rounded-full transition-colors ${
+                            index === activeIndex ? "bg-white" : "bg-white/40"
+                          }`}
+                        />
+                        {String(index + 1).padStart(2, "0")}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* =============================================
+                  RIGHT IMAGE PANEL (Full Image, No Border Box)
+              ============================================== */}
+              <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-white p-4 sm:p-6 lg:col-span-7 lg:p-8">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={`${activeIndex}-${activeImage}`}
                     initial={{
                       opacity: 0,
-                      scale: 1.025,
+                      scale: 0.98,
                     }}
                     animate={{
                       opacity: 1,
@@ -209,164 +305,22 @@ export function ProblemStory({
                     }}
                     exit={{
                       opacity: 0,
-                      scale: 0.985,
+                      scale: 1.02,
                     }}
                     transition={{
-                      duration: 0.48,
-                      ease: [
-                        0.22,
-                        1,
-                        0.36,
-                        1,
-                      ],
+                      duration: 0.45,
+                      ease: [0.22, 1, 0.36, 1],
                     }}
-                    className="absolute inset-0"
+                    className="relative z-10 flex h-full w-full items-center justify-center"
                   >
-                    <ResponsiveImage
-                      src={activeImage}
-                      alt={
-                        activeStep?.title ??
-                        title
-                      }
-                    />
-
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-950/10" />
-                  </motion.div>
-                </AnimatePresence>
-
-                {/* INDEX */}
-
-                <div className="absolute left-6 top-6 z-20 rounded-full border border-white/70 bg-white/80 px-4 py-2 backdrop-blur-md">
-                  <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-slate-600">
-                    Problem{" "}
-                    {String(
-                      activeIndex + 1
-                    ).padStart(2, "0")}
-                    {" / "}
-                    {String(
-                      steps.length
-                    ).padStart(2, "0")}
-                  </span>
-                </div>
-              </div>
-
-              {/* =============================================
-                  BOTTOM CONTENT LAYER
-              ============================================== */}
-
-              <div className="relative flex h-[35%] flex-col justify-between bg-white px-8 py-7 sm:px-10">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeStep.title}
-                    initial={{
-                      opacity: 0,
-                      y: 12,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      y: 0,
-                    }}
-                    exit={{
-                      opacity: 0,
-                      y: -8,
-                    }}
-                    transition={{
-                      duration: 0.38,
-                      ease: [
-                        0.22,
-                        1,
-                        0.36,
-                        1,
-                      ],
-                    }}
-                    className="grid grid-cols-[70px_1fr] gap-5"
-                  >
-                    <span className="pt-1 font-mono text-[10px] tracking-[0.18em] text-[#1463FF]">
-                      {String(
-                        activeIndex + 1
-                      ).padStart(3, "0")}
-                    </span>
-
-                    <div>
-                      <h3 className="max-w-[720px] text-[clamp(1.9rem,3vw,3.1rem)] font-medium leading-[1] tracking-[-0.05em] text-slate-950">
-                        {activeStep.title}
-                      </h3>
-
-                      <p className="mt-4 max-w-[720px] text-sm leading-7 text-slate-600 sm:text-base">
-                        {
-                          activeStep.description
-                        }
-                      </p>
+                    <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
+                      <ResponsiveImage
+                        src={activeImage}
+                        alt={activeStep?.title ?? title}
+                      />
                     </div>
                   </motion.div>
                 </AnimatePresence>
-
-                {/* PROGRESS */}
-
-                <div className="mt-6">
-                  <div className="h-px w-full overflow-hidden bg-slate-200">
-                    <motion.div
-                      style={{
-                        scaleX:
-                          smoothProgress,
-                        transformOrigin:
-                          "left",
-                      }}
-                      className="h-full w-full bg-[#1463FF]"
-                    />
-                  </div>
-
-                  <div className="mt-4 flex items-center justify-between">
-                    {steps.map(
-                      (step, index) => (
-                        <button
-                          key={`${step.title}-progress`}
-                          type="button"
-                          onClick={() => {
-                            const root =
-                              storyRef.current;
-
-                            if (!root)
-                              return;
-
-                            const top =
-                              root.offsetTop;
-
-                            const available =
-                              root.offsetHeight -
-                              window.innerHeight;
-
-                            const ratio =
-                              steps.length <=
-                              1
-                                ? 0
-                                : index /
-                                  steps.length;
-
-                            window.scrollTo({
-                              top:
-                                top +
-                                available *
-                                  ratio,
-                              behavior:
-                                "smooth",
-                            });
-                          }}
-                          className={`font-mono text-[9px] uppercase tracking-[0.13em] transition-colors duration-300 ${
-                            index ===
-                            activeIndex
-                              ? "text-[#1463FF]"
-                              : "text-slate-300"
-                          }`}
-                        >
-                          {String(
-                            index + 1
-                          ).padStart(2, "0")}
-                        </button>
-                      )
-                    )}
-                  </div>
-                </div>
               </div>
             </div>
           </motion.div>

@@ -1,445 +1,709 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useRef, useState } from "react";
-import type { FormEvent, KeyboardEvent } from "react";
+import { useState } from "react";
+import type { FormEvent } from "react";
+import {
+  ArrowUpRight,
+  Check,
+  Copy,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
+} from "lucide-react";
 
 const PHONE_DISPLAY = "+91 XXXX XXX XXX";
 const PHONE_LINK = "+910000000000"; // Replace with ADRIG's real phone number.
 const WHATSAPP_LINK = "+910000000000"; // Replace with ADRIG's real WhatsApp number.
-const EMAIL = "hello@adrig.co.in";
+const EMAIL = "contact@adrig.co.in";
 
-const steps = ["name", "email", "build", "budget", "message"] as const;
-type Step = (typeof steps)[number];
-
-type FormState = Record<Step, string>;
-
-const initialForm: FormState = {
-  name: "",
-  email: "",
-  build: "",
-  budget: "",
-  message: "",
-};
-
-function isValid(step: Step, value: string) {
-  const clean = value.trim();
-
-  if (step === "name") return clean.length >= 2;
-  if (step === "email") return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean);
-  if (step === "build") return clean.length >= 3;
-  if (step === "budget") return true;
-  if (step === "message") return clean.length >= 8;
-
-  return false;
+interface ContactSectionProps {
+  phone?: string;
+  phoneHref?: string;
+  whatsappHref?: string;
+  email?: string;
+  location?: string;
+  mapsHref?: string;
 }
 
-function ChannelCards() {
+export function ContactChannelsSection({
+  phone = PHONE_DISPLAY,
+  phoneHref = `tel:${PHONE_LINK}`,
+  whatsappHref = `https://wa.me/${WHATSAPP_LINK.replace("+", "")}?text=${encodeURIComponent("Hi, I found ADRIG through your website and I'd like to discuss a project.")}`,
+  email = EMAIL,
+  location = "Chennai, India",
+  mapsHref = "https://www.google.com/maps/search/?api=1&query=Chennai%2C%20India",
+}: ContactSectionProps) {
   const [copied, setCopied] = useState(false);
 
   async function copyEmail() {
     try {
-      await navigator.clipboard.writeText(EMAIL);
+      await navigator.clipboard.writeText(email);
       setCopied(true);
-      window.setTimeout(() => setCopied(false), 1600);
+      window.setTimeout(() => {
+        setCopied(false);
+      }, 1800);
     } catch {
-      setCopied(false);
+      // Clipboard may be unavailable in some browser contexts.
     }
   }
 
-  const whatsappMessage = encodeURIComponent(
-    "Hi, I found ADRIG through your website and I'd like to discuss a project."
-  );
-
   return (
-    <div className="grid grid-cols-2 overflow-hidden rounded-[24px] border border-slate-200 bg-white lg:grid-cols-4">
-      <a
-        href={`tel:${PHONE_LINK}`}
-        className="contact-channel group flex min-h-[210px] flex-col justify-between border-b border-r border-slate-200 p-5 transition-all duration-300 hover:-translate-y-1 hover:bg-[#F8FBFF] hover:shadow-[0_18px_45px_rgba(15,23,42,0.08)] sm:p-6 lg:border-b-0"
+    <section
+      id="contact"
+      className="
+        relative overflow-hidden
+        border-y border-[#DCE5F2]
+        bg-[#F7F9FC]
+        py-24 sm:py-28 lg:py-36
+      "
+    >
+      {/* -------------------------------------------------------------
+          ADRIG GRID BACKGROUND
+      ------------------------------------------------------------- */}
+      <div
+        aria-hidden="true"
+        className="
+          pointer-events-none absolute inset-0
+          bg-[linear-gradient(to_right,rgba(14,92,238,0.045)_1px,transparent_1px),linear-gradient(to_bottom,rgba(14,92,238,0.045)_1px,transparent_1px)]
+          bg-[size:72px_72px]
+          [mask-image:linear-gradient(to_bottom,transparent,#000_12%,#000_88%,transparent)]
+        "
+      />
+
+      <div
+        className="
+          relative z-10
+          mx-auto
+          w-full
+          max-w-[1560px]
+          px-6
+          sm:px-8
+          lg:px-12
+        "
       >
-        <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-slate-400">
-          Phone
-        </span>
+        {/* =========================================================
+            INTRO
+        ========================================================= */}
+        <div
+          className="
+            grid gap-10
+            border-b border-[#DCE5F2]
+            pb-14
+            lg:grid-cols-[0.42fr_1.58fr]
+            lg:items-end
+            lg:pb-16
+          "
+        >
+          <div>
+            <p
+              className="
+                text-[13px]
+                font-medium
+                tracking-[0.08em]
+                text-[#0E5CEE]
+              "
+            >
+              Contact ADRIG
+            </p>
+          </div>
 
-        <div>
-          <p className="font-mono text-[clamp(1rem,1.45vw,1.35rem)] tracking-[-0.03em] text-slate-950">
-            {PHONE_DISPLAY}
-          </p>
-          <p className="mt-2 translate-y-1 text-xs text-slate-400 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-            Tap to call
-          </p>
+          <div>
+            <h2
+              className="
+                max-w-[1050px]
+                text-[clamp(3.1rem,5.4vw,6.4rem)]
+                font-normal
+                leading-[0.94]
+                tracking-[-0.065em]
+                text-[#0B1220]
+              "
+            >
+              Bring us the problem
+              <span className="block text-[#0E5CEE]">
+                everyone keeps working around.
+              </span>
+            </h2>
+
+            <p
+              className="
+                mt-7 max-w-[690px]
+                text-[17px]
+                leading-8
+                tracking-[-0.015em]
+                text-slate-500
+                sm:text-lg
+              "
+            >
+              Tell us what&apos;s slowing the team down. We&apos;ll help you
+              figure out what should be automated, rebuilt, or simplified.
+            </p>
+          </div>
         </div>
-      </a>
 
-      <a
-        href={`https://wa.me/${WHATSAPP_LINK.replace("+", "")}?text=${whatsappMessage}`}
-        target="_blank"
-        rel="noreferrer"
-        className="contact-channel group flex min-h-[210px] flex-col justify-between border-b border-slate-200 bg-[#25D366] p-5 text-[#071A0F] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(37,211,102,0.18)] sm:p-6 lg:border-b-0 lg:border-r"
-      >
-        <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-black/55">
-          WhatsApp
-        </span>
-
-        <div>
-          <p className="text-[clamp(1.4rem,2vw,2rem)] font-medium tracking-[-0.045em]">
-            Chat with us
-          </p>
-          <p className="mt-2 font-mono text-xs text-black/55">{PHONE_DISPLAY}</p>
-        </div>
-      </a>
-
-      <div className="contact-channel group relative flex min-h-[210px] flex-col justify-between border-r border-slate-200 p-5 transition-all duration-300 hover:-translate-y-1 hover:bg-[#F8FBFF] hover:shadow-[0_18px_45px_rgba(15,23,42,0.08)] sm:p-6">
-        <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-slate-400">
-          Email
-        </span>
-
-        <div>
-          <a
-            href={`mailto:${EMAIL}`}
-            className="block break-all text-[clamp(1rem,1.5vw,1.35rem)] tracking-[-0.035em] text-slate-950"
+        {/* =========================================================
+            CONTACT GRID
+        ========================================================= */}
+        <div
+          className="
+            mt-8
+            grid
+            gap-4
+            md:grid-cols-2
+            xl:grid-cols-12
+          "
+        >
+          {/* =======================================================
+              EMAIL — PRIMARY
+          ======================================================= */}
+          <div
+            className="
+              group relative
+              min-h-[330px]
+              overflow-hidden
+              rounded-[30px]
+              border border-[#C9D9F4]
+              bg-[#0E5CEE]
+              p-8 text-white
+              transition-transform duration-300
+              hover:-translate-y-1
+              md:p-10
+              xl:col-span-5
+            "
           >
-            {EMAIL}
+            <div className="flex items-start justify-between gap-6">
+              <div
+                className="
+                  flex h-12 w-12
+                  items-center justify-center
+                  rounded-full
+                  border border-white/20
+                  bg-white/10
+                "
+              >
+                <Mail className="h-5 w-5" />
+              </div>
+
+              <span className="text-[13px] text-white/60">
+                Best for project enquiries
+              </span>
+            </div>
+
+            <div className="absolute bottom-9 left-8 right-8 md:left-10 md:right-10">
+              <p className="text-[15px] text-white/65">
+                Email
+              </p>
+
+              <a
+                href={`mailto:${email}`}
+                className="
+                  mt-3 block
+                  break-words
+                  text-[clamp(1.9rem,3vw,3.6rem)]
+                  font-medium
+                  leading-[1]
+                  tracking-[-0.045em]
+                "
+              >
+                {email}
+              </a>
+
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <a
+                  href={`mailto:${email}`}
+                  className="
+                    inline-flex h-11
+                    items-center gap-2
+                    rounded-full
+                    bg-white
+                    px-5
+                    text-sm font-medium
+                    text-[#0B1220]
+                    transition-transform
+                    hover:-translate-y-0.5
+                  "
+                >
+                  Start an email
+                  <ArrowUpRight className="h-4 w-4" />
+                </a>
+
+                <button
+                  type="button"
+                  onClick={copyEmail}
+                  className="
+                    inline-flex h-11
+                    items-center gap-2
+                    rounded-full
+                    border border-white/20
+                    px-5
+                    text-sm font-medium
+                    text-white
+                    transition-colors
+                    hover:bg-white/10
+                  "
+                >
+                  {copied ? (
+                    <>
+                      <Check className="h-4 w-4" />
+                      Copied
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-4 w-4" />
+                      Copy email
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* =======================================================
+              WHATSAPP
+          ======================================================= */}
+          <a
+            href={whatsappHref}
+            target="_blank"
+            rel="noreferrer"
+            className="
+              group relative
+              min-h-[330px]
+              overflow-hidden
+              rounded-[30px]
+              border border-[#C9D9F4]
+              bg-white
+              p-8
+              transition-all duration-300
+              hover:-translate-y-1
+              hover:border-[#0E5CEE]
+              md:p-10
+              xl:col-span-3
+            "
+          >
+            <div className="flex items-start justify-between">
+              <div
+                className="
+                  flex h-12 w-12
+                  items-center justify-center
+                  rounded-full
+                  bg-[#EDF4FF]
+                  text-[#0E5CEE]
+                "
+              >
+                <MessageCircle className="h-5 w-5" />
+              </div>
+
+              <ArrowUpRight
+                className="
+                  h-5 w-5 text-slate-300
+                  transition-all duration-300
+                  group-hover:-translate-y-1
+                  group-hover:translate-x-1
+                  group-hover:text-[#0E5CEE]
+                "
+              />
+            </div>
+
+            <div className="absolute bottom-9 left-8 right-8 md:left-10 md:right-10">
+              <p className="text-[15px] text-slate-400">
+                WhatsApp
+              </p>
+
+              <h3
+                className="
+                  mt-3
+                  text-[clamp(2rem,2.7vw,3.1rem)]
+                  leading-[1]
+                  tracking-[-0.045em]
+                  text-[#0B1220]
+                "
+              >
+                Chat with us.
+              </h3>
+
+              <p className="mt-5 max-w-[260px] text-[15px] leading-6 text-slate-500">
+                Good for quick questions and starting a conversation.
+              </p>
+            </div>
           </a>
 
-          <button
-            type="button"
-            onClick={copyEmail}
-            className="mt-3 text-xs text-[#1463FF] opacity-70 transition-opacity hover:opacity-100"
+          {/* =======================================================
+              PHONE
+          ======================================================= */}
+          <a
+            href={phoneHref}
+            className="
+              group relative
+              min-h-[330px]
+              overflow-hidden
+              rounded-[30px]
+              border border-[#C9D9F4]
+              bg-white
+              p-8
+              transition-all duration-300
+              hover:-translate-y-1
+              hover:border-[#0E5CEE]
+              md:p-10
+              xl:col-span-4
+            "
           >
-            {copied ? "Copied" : "Copy email"}
-          </button>
+            <div className="flex items-start justify-between">
+              <div
+                className="
+                  flex h-12 w-12
+                  items-center justify-center
+                  rounded-full
+                  bg-[#EDF4FF]
+                  text-[#0E5CEE]
+                "
+              >
+                <Phone className="h-5 w-5" />
+              </div>
+
+              <ArrowUpRight
+                className="
+                  h-5 w-5 text-slate-300
+                  transition-all duration-300
+                  group-hover:-translate-y-1
+                  group-hover:translate-x-1
+                  group-hover:text-[#0E5CEE]
+                "
+              />
+            </div>
+
+            <div className="absolute bottom-9 left-8 right-8 md:left-10 md:right-10">
+              <p className="text-[15px] text-slate-400">
+                Phone
+              </p>
+
+              <p
+                className="
+                  mt-3
+                  text-[clamp(1.9rem,2.6vw,3rem)]
+                  leading-[1]
+                  tracking-[-0.045em]
+                  text-[#0B1220]
+                "
+              >
+                {phone}
+              </p>
+
+              <p className="mt-5 text-[15px] leading-6 text-slate-500">
+                Prefer talking it through? Give us a call.
+              </p>
+            </div>
+          </a>
+
+          {/* =======================================================
+              LOCATION
+          ======================================================= */}
+          <a
+            href={mapsHref}
+            target="_blank"
+            rel="noreferrer"
+            className="
+              group relative
+              min-h-[270px]
+              overflow-hidden
+              rounded-[30px]
+              bg-[#12263F]
+              p-8
+              text-white
+              transition-transform duration-300
+              hover:-translate-y-1
+              md:min-h-[300px]
+              md:p-10
+              xl:col-span-12
+            "
+          >
+            {/* schematic map decoration */}
+            <div
+              aria-hidden="true"
+              className="
+                absolute
+                -right-[120px]
+                -top-[180px]
+                h-[520px]
+                w-[520px]
+                rounded-full
+                border border-white/10
+              "
+            />
+
+            <div
+              aria-hidden="true"
+              className="
+                absolute
+                -right-[15px]
+                -top-[75px]
+                h-[330px]
+                w-[330px]
+                rounded-full
+                border border-white/10
+              "
+            />
+
+            <div className="relative z-10 flex h-full flex-col justify-between gap-14 md:flex-row md:items-end">
+              <div>
+                <div
+                  className="
+                    flex h-12 w-12
+                    items-center justify-center
+                    rounded-full
+                    border border-white/15
+                    bg-white/10
+                  "
+                >
+                  <MapPin className="h-5 w-5" />
+                </div>
+
+                <p className="mt-12 text-[15px] text-white/50">
+                  Location
+                </p>
+
+                <h3
+                  className="
+                    mt-3
+                    text-[clamp(2.7rem,4.6vw,5.5rem)]
+                    leading-[0.95]
+                    tracking-[-0.055em]
+                  "
+                >
+                  {location}
+                </h3>
+              </div>
+
+              <div
+                className="
+                  inline-flex items-center gap-3
+                  text-[15px]
+                  font-medium
+                  text-white/80
+                "
+              >
+                Open in Google Maps
+                <ArrowUpRight
+                  className="
+                    h-4 w-4
+                    transition-transform
+                    group-hover:-translate-y-1
+                    group-hover:translate-x-1
+                  "
+                />
+              </div>
+            </div>
+          </a>
         </div>
       </div>
-
-      <a
-        href="https://www.google.com/maps/search/?api=1&query=Chennai%2C%20India"
-        target="_blank"
-        rel="noreferrer"
-        className="contact-channel group relative min-h-[210px] overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(15,23,42,0.10)]"
-        style={{
-          backgroundImage:
-            "linear-gradient(180deg, rgba(6,22,47,0.04) 0%, rgba(6,22,47,0.78) 100%), url('/images/contact/chennai-map.webp')",
-          backgroundPosition: "center",
-          backgroundSize: "cover",
-        }}
-      >
-        <div className="absolute inset-x-0 bottom-0 p-5 text-white sm:p-6">
-          <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-white/65">
-            Location
-          </span>
-          <p className="mt-2 text-xl tracking-[-0.04em]">Chennai, India</p>
-          <p className="mt-2 text-xs text-white/65">Open in Google Maps ↗</p>
-        </div>
-      </a>
-    </div>
+    </section>
   );
 }
 
-function ContactExperience() {
-  const [form, setForm] = useState<FormState>(initialForm);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [attempted, setAttempted] = useState(false);
+function ContactFormSection() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "success">("idle");
-  const formRef = useRef<HTMLFormElement>(null);
-
-  const activeStep = steps[activeIndex];
-
-  const allRequiredValid = useMemo(
-    () =>
-      isValid("name", form.name) &&
-      isValid("email", form.email) &&
-      isValid("build", form.build) &&
-      isValid("message", form.message),
-    [form]
-  );
-
-  function updateField(step: Step, value: string) {
-    setForm((current) => ({ ...current, [step]: value }));
-    setAttempted(false);
-  }
-
-  function goNext() {
-    const valid = isValid(activeStep, form[activeStep]);
-
-    if (!valid && activeStep !== "budget") {
-      setAttempted(true);
-      return;
-    }
-
-    setAttempted(false);
-
-    if (activeIndex < steps.length - 1) {
-      setActiveIndex((current) => current + 1);
-    }
-  }
-
-  function handleKeyDown(event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    if (event.key !== "Enter" || event.shiftKey) return;
-
-    event.preventDefault();
-
-    if (activeStep === "message") {
-      formRef.current?.requestSubmit();
-      return;
-    }
-
-    goNext();
-  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
-    if (!allRequiredValid) {
-      setAttempted(true);
-
-      const firstInvalid = steps.findIndex(
-        (step) => step !== "budget" && !isValid(step, form[step])
-      );
-
-      if (firstInvalid >= 0) setActiveIndex(firstInvalid);
-      return;
-    }
+    if (!name.trim() || !email.trim() || !message.trim()) return;
 
     setStatus("sending");
-
-    // Front-end submit state only. Replace this small block with your API call
-    // when your contact endpoint is ready, e.g. await fetch('/api/contact', ...).
-    await new Promise((resolve) => window.setTimeout(resolve, 700));
-
+    await new Promise((resolve) => window.setTimeout(resolve, 800));
     setStatus("success");
   }
 
-  if (status === "success") {
-    return (
-      <section id="contact-form" className="bg-white py-24 sm:py-32">
-        <div className="shell">
-          <div className="mx-auto flex min-h-[420px] max-w-[620px] items-center justify-center text-center">
-            <div className="animate-[contactSuccess_.55s_cubic-bezier(.22,1,.36,1)_both]">
-              <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[#E9F1FF] text-[#1463FF]">
-                ✓
-              </span>
-              <h2 className="mt-6 text-[clamp(2.7rem,5vw,5rem)] leading-[0.95] tracking-[-0.06em] text-slate-950">
-                Got it.
-              </h2>
-              <p className="mt-4 text-base leading-7 text-slate-500 sm:text-lg">
-                We&apos;ll reply within a business day.
-              </p>
-            </div>
+  return (
+    <section
+      id="contact-form"
+      className="relative w-full overflow-hidden bg-[#040E1E] px-4 py-20 sm:px-6 sm:py-28 lg:px-8"
+    >
+      <div className="mx-auto max-w-7xl">
+        {/* Section Header */}
+        <div className="mb-12 flex flex-col gap-4 sm:mb-16 md:flex-row md:items-start md:gap-8">
+          <span className="font-mono text-xs font-semibold uppercase tracking-[0.24em] text-[#5B91F5]">
+            02.6
+          </span>
+          <div>
+            <h2 className="text-[clamp(2.6rem,5vw,5.2rem)] font-normal leading-[0.94] tracking-[-0.06em] text-white">
+              Contact — the close
+            </h2>
+            <p className="mt-4 max-w-[700px] text-base leading-7 text-slate-400 sm:text-lg">
+              Every path converges here, and this is the only place the site is allowed to ask directly. A split panel:
+              proof on the left, the form on the right, nothing else on the screen.
+            </p>
           </div>
         </div>
-      </section>
-    );
-  }
 
-  return (
-    <>
-      <section className="border-b border-slate-200/70 bg-[#F8FBFF] py-14 sm:py-20">
-        <div className="shell">
-          <ChannelCards />
-        </div>
-      </section>
-
-      <section id="contact-form" className="bg-white py-24 sm:py-32">
-        <div className="shell">
-          <form
-            ref={formRef}
-            onSubmit={handleSubmit}
-            className="mx-auto w-full max-w-[520px]"
-          >
-            <p className="mb-14 font-mono text-[10px] uppercase tracking-[0.2em] text-[#1463FF]">
-              Start a conversation
-            </p>
-
-            <div className="space-y-8">
-              {steps.map((step, index) => {
-                const active = index === activeIndex;
-                const completed = index < activeIndex;
-                const hidden = index > activeIndex;
-                const valid = isValid(step, form[step]);
-                const hasValue = form[step].trim().length > 0;
-
-                if (hidden) return null;
-
-                const prompts: Record<Step, string> = {
-                  name: "What’s your name?",
-                  email: "What’s your email?",
-                  build: "What are you looking to build?",
-                  budget: "Budget or timeline?",
-                  message: "Anything else we should know?",
-                };
-
-                const helpers: Record<Step, string> = {
-                  name: "Just so we know who we’re speaking with.",
-                  email: "We’ll only use this to reply to your enquiry.",
-                  build: "A rough idea is enough — no technical brief needed.",
-                  budget: "Optional. No wrong answer — this just helps us prep.",
-                  message: "Press Shift + Enter for a new line, or Enter to send.",
-                };
-
-                return (
-                  <div
-                    key={step}
-                    className={`transition-all duration-300 ${
-                      active
-                        ? "translate-y-0 opacity-100"
-                        : "-translate-y-1 opacity-40"
-                    }`}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => completed && setActiveIndex(index)}
-                      className={`w-full text-left ${completed ? "cursor-pointer" : "cursor-default"}`}
-                    >
-                      <div className="flex items-start justify-between gap-5">
-                        <label
-                          htmlFor={`contact-${step}`}
-                          className={`block tracking-[-0.045em] text-slate-950 ${
-                            active
-                              ? "text-[clamp(2rem,4vw,3rem)] leading-[1.02]"
-                              : "text-lg leading-tight"
-                          }`}
-                        >
-                          {prompts[step]}
-                          {step === "budget" && (
-                            <span className="ml-2 align-middle font-mono text-[9px] uppercase tracking-[0.14em] text-slate-400">
-                              optional
-                            </span>
-                          )}
-                        </label>
-
-                        {hasValue && valid && (
-                          <span className="mt-1 text-sm text-[#1463FF] transition-opacity duration-300">
-                            ✓
-                          </span>
-                        )}
-                      </div>
-                    </button>
-
-                    {active && (
-                      <div className="mt-6 animate-[contactFieldIn_.35s_cubic-bezier(.22,1,.36,1)_both]">
-                        {step === "message" ? (
-                          <textarea
-                            id={`contact-${step}`}
-                            name={step}
-                            value={form[step]}
-                            autoFocus
-                            rows={2}
-                            onChange={(event) => updateField(step, event.target.value)}
-                            onKeyDown={handleKeyDown}
-                            onInput={(event) => {
-                              const target = event.currentTarget;
-                              target.style.height = "auto";
-                              target.style.height = `${target.scrollHeight}px`;
-                            }}
-                            className="w-full resize-none overflow-hidden border-b-2 border-[#1463FF] bg-transparent pb-4 text-xl leading-8 text-slate-950 outline-none placeholder:text-slate-300"
-                            placeholder="Tell us the context, problem or goal..."
-                          />
-                        ) : (
-                          <input
-                            id={`contact-${step}`}
-                            name={step}
-                            type={step === "email" ? "email" : "text"}
-                            value={form[step]}
-                            autoFocus
-                            onChange={(event) => updateField(step, event.target.value)}
-                            onKeyDown={handleKeyDown}
-                            className="w-full border-b-2 border-[#1463FF] bg-transparent pb-4 text-xl text-slate-950 outline-none placeholder:text-slate-300"
-                            placeholder={
-                              step === "name"
-                                ? "Your name"
-                                : step === "email"
-                                  ? "you@company.com"
-                                  : step === "build"
-                                    ? "A product, workflow, AI system..."
-                                    : "₹1–3L, this quarter, still exploring..."
-                            }
-                          />
-                        )}
-
-                        <div className="mt-3 flex min-h-6 items-start justify-between gap-4">
-                          <p className="text-xs leading-5 text-slate-400">
-                            {attempted && step !== "budget" && !valid
-                              ? step === "email"
-                                ? "Enter a valid email address to continue."
-                                : "Add a little more detail to continue."
-                              : helpers[step]}
-                          </p>
-
-                          {step !== "message" && (
-                            <button
-                              type="button"
-                              onClick={goNext}
-                              className="shrink-0 font-mono text-[10px] uppercase tracking-[0.14em] text-[#1463FF] transition-opacity hover:opacity-60"
-                            >
-                              Enter ↵
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+        {/* Main Card Container */}
+        <div className="grid grid-cols-1 overflow-hidden rounded-[30px] border border-[#17325C] bg-[#071630] shadow-[0_30px_90px_rgba(2,9,22,0.85)] lg:grid-cols-12">
+          {/* Left Visual / Proof Panel */}
+          <div className="relative flex min-h-[480px] flex-col justify-end overflow-hidden bg-[#0B2A6B] p-6 sm:p-10 lg:col-span-6 lg:min-h-[620px] lg:p-12">
+            {/* Architectural Vector Scene */}
+            <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+              <svg
+                viewBox="0 0 520 640"
+                preserveAspectRatio="xMidYMid slice"
+                className="h-full w-full object-cover"
+              >
+                <defs>
+                  <pattern id="cxd" width="9" height="9" patternUnits="userSpaceOnUse">
+                    <circle cx="1.6" cy="1.6" r="1.6" fill="rgba(159,190,249,0.55)" />
+                  </pattern>
+                </defs>
+                <rect width="520" height="640" fill="#0B2A6B" />
+                <path
+                  d="M0 300 L120 190 L230 285 L330 175 L520 330 L520 640 L0 640Z"
+                  fill="url(#cxd)"
+                  opacity="0.6"
+                />
+                <path
+                  d="M0 380 L150 285 L270 360 L400 250 L520 340 L520 640 L0 640Z"
+                  fill="#123A8C"
+                  opacity="0.85"
+                />
+                <path
+                  d="M0 470 L170 385 L300 455 L430 370 L520 420 L520 640 L0 640Z"
+                  fill="#071C55"
+                />
+                <g stroke="rgba(159,190,249,0.4)" strokeWidth="1.2" fill="none">
+                  <path d="M0 470 L170 385 L300 455 L430 370 L520 420" />
+                  <path d="M0 380 L150 285 L270 360 L400 250 L520 340" />
+                </g>
+              </svg>
             </div>
 
-            {activeStep === "message" && (
-              <button
-                type="submit"
-                disabled={status === "sending"}
-                className="mt-10 inline-flex min-h-[52px] min-w-[132px] items-center justify-center rounded-full bg-[#1463FF] px-7 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#0B54DE] disabled:cursor-wait disabled:opacity-70"
+            {/* Testimonial Quote Card */}
+            <figure className="relative z-10 rounded-[20px] border border-white/15 bg-[#051633]/85 p-6 sm:p-7 shadow-[0_16px_40px_rgba(0,0,0,0.4)] backdrop-blur-md">
+              <blockquote className="text-base font-semibold leading-relaxed text-white sm:text-lg">
+                “They didn&apos;t sell us AI. They asked what we did twice a day, and then made it stop.”
+              </blockquote>
+              <figcaption className="mt-5 flex items-center gap-3.5">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/20 bg-[#122A54] font-mono text-xs font-semibold text-white">
+                  RP
+                </span>
+                <div className="text-xs">
+                  <span className="block font-semibold text-white">[ Real name ]</span>
+                  <span className="text-slate-400">[ Role ] · [ Company ]</span>
+                </div>
+              </figcaption>
+            </figure>
+          </div>
+
+          {/* Right Form Panel */}
+          <div className="relative z-10 flex flex-col justify-center bg-[#071630] p-6 sm:p-10 lg:col-span-6 lg:p-12">
+            {/* ADRIG Mark */}
+            <span className="mb-5 inline-block" aria-hidden="true">
+              <svg viewBox="163 178 274 244" fill="none" className="h-9 w-9">
+                <g stroke="#ffffff" strokeWidth="36" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M300 195 L180 405" />
+                  <path d="M300 195 L420 405" />
+                </g>
+                <path d="M247.5 345 H352.5" stroke="#5B91F5" strokeWidth="36" strokeLinecap="round" />
+              </svg>
+            </span>
+
+            <h3 className="text-3xl font-bold tracking-[-0.04em] text-white sm:text-4xl">
+              Contact us
+            </h3>
+
+            <p className="mt-3 text-sm leading-6 text-slate-400 sm:text-base">
+              Tell us what repeats. We will tell you honestly whether it is worth automating — and what it would cost if it is. Or email{" "}
+              <a
+                href="mailto:contact@adrig.co.in"
+                className="text-[#5B91F5] underline underline-offset-4 transition-colors hover:text-white"
               >
-                {status === "sending" ? (
-                  <span className="flex items-center gap-3">
-                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/35 border-t-white" />
-                    Sending
-                  </span>
-                ) : (
-                  "Send it"
-                )}
-              </button>
+                contact@adrig.co.in
+              </a>
+              .
+            </p>
+
+            {status === "success" ? (
+              <div className="mt-8 rounded-[16px] border border-[#5B91F5]/30 bg-[#0C2248] p-7 text-center text-white">
+                <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[#5B91F5]/20 text-lg font-bold text-[#5B91F5]">
+                  ✓
+                </span>
+                <h4 className="mt-3 text-xl font-medium">Message sent</h4>
+                <p className="mt-1.5 text-xs text-slate-300">
+                  We will review your inquiry and get back to you within one business day.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setName("");
+                    setEmail("");
+                    setMessage("");
+                    setStatus("idle");
+                  }}
+                  className="mt-4 text-xs font-semibold text-[#5B91F5] underline hover:text-white"
+                >
+                  Send another message
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="mt-7 space-y-4 sm:space-y-5">
+                <div>
+                  <label htmlFor="cxName" className="block text-xs font-semibold text-slate-300">
+                    Name
+                  </label>
+                  <input
+                    id="cxName"
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Your name"
+                    className="mt-1.5 w-full rounded-[10px] border border-[#19335A] bg-[#0A1D3D] px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-colors focus:border-[#5B91F5] focus:ring-1 focus:ring-[#5B91F5]"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="cxMail" className="block text-xs font-semibold text-slate-300">
+                    Work email
+                  </label>
+                  <input
+                    id="cxMail"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@company.com"
+                    className="mt-1.5 w-full rounded-[10px] border border-[#19335A] bg-[#0A1D3D] px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-colors focus:border-[#5B91F5] focus:ring-1 focus:ring-[#5B91F5]"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="cxMsg" className="block text-xs font-semibold text-slate-300">
+                    What are you trying to fix?
+                  </label>
+                  <textarea
+                    id="cxMsg"
+                    rows={4}
+                    required
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="The problem, not the spec."
+                    className="mt-1.5 w-full resize-none rounded-[10px] border border-[#19335A] bg-[#0A1D3D] px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-colors focus:border-[#5B91F5] focus:ring-1 focus:ring-[#5B91F5]"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={status === "sending"}
+                  className="mt-3 flex min-h-[48px] w-full items-center justify-center rounded-[10px] bg-white px-6 text-sm font-semibold text-[#071630] shadow-[0_12px_30px_rgba(255,255,255,0.12)] transition-all duration-300 hover:bg-[#5B91F5] hover:text-white disabled:cursor-wait disabled:opacity-60"
+                >
+                  {status === "sending" ? "Sending message..." : "Send message"}
+                </button>
+              </form>
             )}
-          </form>
+          </div>
         </div>
-      </section>
-
-      <style jsx global>{`
-        @keyframes contactFieldIn {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes contactSuccess {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .contact-channel,
-          [class*="contactFieldIn"],
-          [class*="contactSuccess"] {
-            transition: none !important;
-            animation: none !important;
-            transform: none !important;
-          }
-        }
-      `}</style>
-    </>
+      </div>
+    </section>
   );
 }
-
 
 const FAQ = [
   {
@@ -510,7 +774,11 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <ContactExperience />
+      {/* Redesigned Contact Channels Grid */}
+      <ContactChannelsSection />
+
+      {/* Split-Panel Contact Close */}
+      <ContactFormSection />
 
       <section className="border-y border-slate-200/70 bg-[#F8FBFF] py-20 sm:py-28">
         <div className="shell grid gap-12 lg:grid-cols-[0.65fr_1.35fr] lg:gap-[8vw]">

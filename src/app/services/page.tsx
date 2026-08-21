@@ -492,11 +492,6 @@ function ServiceSlide({
     story.question ??
     "Still solving this manually every single week?";
 
-  const result =
-    story.metricLabel
-      ? `Result: ${story.metricNumber} ${story.metricLabel}`
-      : "Result: the workflow moves forward without your team becoming the middleware.";
-
   return (
     <motion.article
       initial={{ opacity: 0, y: 30 }}
@@ -588,27 +583,40 @@ function ServiceSlide({
                 {service.name}
               </h3>
 
-              {/* EXPLANATION */}
-              <p
-                className="
-                  mt-6 max-w-[620px]
-                  text-[15px] leading-8 text-slate-600
-                  sm:text-[17px]
-                "
-              >
-                {story.paragraph || service.overview}
-              </p>
+              {/* RESULT + EXPLANATION */}
+              <div className="mt-8 flex max-w-[720px] gap-6 sm:gap-8">
+                {/* Metric block */}
+                {story.metricNumber && (
+                  <div className="flex flex-none flex-col">
+                    <span
+                      className="
+                        text-[clamp(3rem,5vw,4.5rem)] font-semibold italic
+                        leading-[0.95] tracking-[-0.04em] text-[#0E5CEE]
+                      "
+                    >
+                      {story.metricNumber}
+                    </span>
+                    <span
+                      className="
+                        mt-2 max-w-[160px] text-[13px] font-medium
+                        leading-[1.4] text-slate-500
+                      "
+                    >
+                      {story.metricLabel}
+                    </span>
+                  </div>
+                )}
 
-              {/* RESULT */}
-              <p
-                className="
-                  mt-6 max-w-[660px]
-                  text-[15px] font-medium leading-7
-                  text-[#0E5CEE] sm:text-[16px]
-                "
-              >
-                {result}
-              </p>
+                {/* Explanation paragraph */}
+                <p
+                  className="
+                    text-[15px] leading-8 text-slate-800
+                    sm:text-[17px]
+                  "
+                >
+                  {story.paragraph || service.overview}
+                </p>
+              </div>
 
               {/* ACTION (Solid royal blue button with white text and arrow badge) */}
               <div className="mt-9 flex items-center">

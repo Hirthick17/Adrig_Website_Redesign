@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 
 import { FOOTER_LINKS } from "@/lib/site-data";
@@ -95,9 +96,15 @@ export default function Footer() {
               href="/"
               className="group inline-flex items-center gap-3"
             >
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0D203A] text-[11px] font-bold text-white transition-colors duration-300 group-hover:bg-[#1463FF]">
-                A
-              </span>
+              <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-white shadow-xs transition-transform duration-300 group-hover:scale-105">
+                <Image
+                  src="/logo.jpg"
+                  alt="ADRIG"
+                  width={40}
+                  height={40}
+                  className="h-full w-full object-contain"
+                />
+              </div>
 
               <span className="text-lg font-semibold tracking-[-0.035em] text-slate-950">
                 ADRIG

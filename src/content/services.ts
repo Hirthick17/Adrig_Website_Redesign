@@ -94,9 +94,9 @@ export const chatbotService: ServiceConfig = {
     "/images/chatbot posters/chatbot-meme-03-chatbot-support-team-2x3.png",
   ],
   problemImages: [
-    "/images/chatbot posters/chatbot-meme-01-repetitive-faq-2x3.png",
-    "/images/chatbot posters/chatbot-meme-02-understands-but-cant-act-2x3.png",
-    "/images/chatbot posters/chatbot-meme-03-chatbot-support-team-2x3.png",
+    "/images/chatbot-problems/img1.png",
+    "/images/chatbot-problems/img2.png",
+    "/images/chatbot-problems/img3.png",
   ],
   hero: {
     eyebrow: "Chatbot Development",
@@ -197,14 +197,14 @@ export const llmService: ServiceConfig = {
   slug: "generative-ai-solutions",
   aliases: ["generative-ai", "llm-development", "llm"],
   heroImages: [
-    "/images/generative-ai-01.png",
-    "/images/generative-ai-02.png",
-    "/images/generative-ai-03.png",
+    "/images/generative-ai/img1.png",
+    "/images/generative-ai/img2.png",
+    "/images/generative-ai/img3.png",
   ],
   problemImages: [
-    "/images/generative-ai-01.png",
-    "/images/generative-ai-02.png",
-    "/images/generative-ai-03.png",
+    "/images/generative-ai/img1.png",
+    "/images/generative-ai/img2.png",
+    "/images/generative-ai/img3.png",
   ],
   hero: {
     eyebrow: "Generative AI & LLM Systems",
@@ -280,7 +280,7 @@ export const llmService: ServiceConfig = {
       title: "Clinical Protocol Assistant",
       description: "Assist healthcare practitioners in retrieving treatment protocols grounded in medical journals.",
       impact: "100% auditable citation links",
-      image: "/images/generative-ai-02.png",
+      image: "/images/generative-ai/img2.png",
     },
   ],
   proof: {
@@ -299,14 +299,14 @@ export const aiAutomationService: ServiceConfig = {
   slug: "ai-automation",
   aliases: ["ai-automation"],
   heroImages: [
-    "/images/ai-automations-01.png",
-    "/images/ai-automations-02.png",
-    "/images/ai-automations-03.png",
+    "/images/ai automation/img1.png",
+    "/images/ai automation/img2.png",
+    "/images/ai automation/img3.png",
   ],
   problemImages: [
-    "/images/ai-automations-01.png",
-    "/images/ai-automations-02.png",
-    "/images/ai-automations-03.png",
+    "/images/ai automation/img1.png",
+    "/images/ai automation/img2.png",
+    "/images/ai automation/img3.png",
   ],
   hero: {
     eyebrow: "AI Automation",
@@ -382,7 +382,7 @@ export const aiAutomationService: ServiceConfig = {
       title: "Insurance Claims Triage & Fraud Check",
       description: "Auto-review medical bills, police reports, and damage photos for fraud indicators.",
       impact: "Claims settlement down from 6 days to 4 hours",
-      image: "/images/ai-automations-02.png",
+      image: "/images/ai automation/img2.png",
     },
   ],
   proof: {
@@ -401,14 +401,14 @@ export const workflowService: ServiceConfig = {
   slug: "workflow-automation",
   aliases: ["workflow-automations", "workflow-automation"],
   heroImages: [
-    "/images/workflow-automations-01.png",
-    "/images/workflow-automations-02.png",
-    "/images/workflow-automations-03.png",
+    "/images/workflow_posters/img1.png",
+    "/images/workflow_posters/img2.png",
+    "/images/workflow_posters/img3.png",
   ],
   problemImages: [
-    "/images/workflow-automations-01.png",
-    "/images/workflow-automations-02.png",
-    "/images/workflow-automations-03.png",
+    "/images/workflow-problems/img1.png",
+    "/images/workflow-problems/img2.png",
+    "/images/workflow-problems/img3.png",
   ],
   hero: {
     eyebrow: "Workflow Automation",
@@ -484,7 +484,7 @@ export const workflowService: ServiceConfig = {
       title: "Automated Supply Chain Reordering",
       description: "Trigger manufacturer purchase orders automatically when warehouse stock drops below safety buffers.",
       impact: "Zero stockouts across 18 regional hubs",
-      image: "/images/workflow-automations-02.png",
+      image: "/images/workflow_posters/img2.png",
     },
   ],
   proof: {
@@ -503,14 +503,14 @@ export const dataAnalysisService: ServiceConfig = {
   slug: "predictive-analytics",
   aliases: ["data-analysis", "data-engineering", "data-analysis-predictive-analytics"],
   heroImages: [
-    "/images/data-predictive-analysis-01.png",
-    "/images/data-predictive-analysis-02.png",
-    "/images/data-predictive-analysis-03.png",
+    "/images/data-analysis-predictive/img1.png",
+    "/images/data-analysis-predictive/img2.png",
+    "/images/data-analysis-predictive/img3.png",
   ],
   problemImages: [
-    "/images/data-predictive-analysis-01.png",
-    "/images/data-predictive-analysis-02.png",
-    "/images/data-predictive-analysis-03.png",
+    "/images/data-analysis-predictive/img1.png",
+    "/images/data-analysis-predictive/img2.png",
+    "/images/data-analysis-predictive/img3.png",
   ],
   hero: {
     eyebrow: "Data Intelligence & Analytics",
@@ -586,7 +586,7 @@ export const dataAnalysisService: ServiceConfig = {
       title: "Real-Time Retail Revenue Forecasting",
       description: "Aggregate point-of-sale data across 200+ stores with dynamic inventory allocation.",
       impact: "18% reduction in inventory holding costs",
-      image: "/images/data-predictive-analysis-02.png",
+      image: "/images/data-analysis-predictive/img2.png",
     },
   ],
   proof: {
@@ -605,14 +605,14 @@ export const softwareService: ServiceConfig = {
   slug: "software-development",
   aliases: ["software", "software-engineering"],
   heroImages: [
-    "/images/software posters/software-meme-01-less-chaos.png",
-    "/images/software posters/software-meme-02-small-change.png",
-    "/images/software posters/software-meme-03-maintenance-firefighter.png",
+    "/images/software posters/img1.png",
+    "/images/software posters/img2.png",
+    "/images/software posters/img3.png",
   ],
   problemImages: [
-    "/images/software posters/software-meme-01-less-chaos.png",
-    "/images/software posters/software-meme-02-small-change.png",
-    "/images/software posters/software-meme-03-maintenance-firefighter.png",
+    "/images/software-problems/img1.png",
+    "/images/software-problems/img2.png",
+    "/images/software-problems/img3.png",
   ],
   hero: {
     eyebrow: "Software Engineering",
@@ -688,7 +688,7 @@ export const softwareService: ServiceConfig = {
       title: "Fleet & Asset Telemetry Dashboard",
       description: "Real-time interactive GPS and sensor mapping platform tracking industrial transport assets.",
       impact: "Sub-second live map updates for 2,400+ vehicles",
-      image: "/images/software posters/software-meme-02-small-change.png",
+      image: "/images/software posters/img2.png",
     },
   ],
   proof: {
@@ -707,14 +707,14 @@ export const consultationService: ServiceConfig = {
   slug: "ai-ml-development",
   aliases: ["consultation", "ai-consultation", "ai-ml"],
   heroImages: [
-    "/images/ai-ml-01.png",
-    "/images/ai-ml-02.png",
-    "/images/ai-ml-03.png",
+    "/images/aiml/img1.png",
+    "/images/aiml/img2.png",
+    "/images/aiml/img3.png",
   ],
   problemImages: [
-    "/images/ai-ml-01.png",
-    "/images/ai-ml-02.png",
-    "/images/ai-ml-03.png",
+    "/images/aiml/img1.png",
+    "/images/aiml/img2.png",
+    "/images/aiml/img3.png",
   ],
   hero: {
     eyebrow: "AI Consultation & Strategy",
@@ -790,7 +790,7 @@ export const consultationService: ServiceConfig = {
       title: "Security & Sovereignty Review",
       description: "Audit compliance requirements for deploying proprietary LLMs in regulated financial environments.",
       impact: "Approved for production air-gapped deployment",
-      image: "/images/ai-ml-02.png",
+      image: "/images/aiml/img2.png",
     },
   ],
   proof: {
@@ -911,14 +911,14 @@ export const dataEngineeringService: ServiceConfig = {
   slug: "data-engineering",
   aliases: ["data-engineering-solutions", "lakehouse"],
   heroImages: [
-    "/images/data-engineering-01.png",
-    "/images/data-engineering-02.png",
-    "/images/data-engineering-03.png",
+    "/images/data-engineering/img1.png",
+    "/images/data-engineering/img2.png",
+    "/images/data-engineering/img3.png",
   ],
   problemImages: [
-    "/images/data-engineering-01.png",
-    "/images/data-engineering-02.png",
-    "/images/data-engineering-03.png",
+    "/images/data-engineering/img1.png",
+    "/images/data-engineering/img2.png",
+    "/images/data-engineering/img3.png",
   ],
   hero: {
     eyebrow: "Data Engineering",
@@ -994,7 +994,7 @@ export const dataEngineeringService: ServiceConfig = {
       title: "Real-Time Financial Transaction Aggregator",
       description: "Unified CDC pipeline synchronizing 12 regional core-banking databases into a central lakehouse.",
       impact: "Replaced 6-hour batch jobs with sub-minute continuous sync",
-      image: "/images/data-engineering-02.png",
+      image: "/images/data-engineering/img2.png",
     },
   ],
   proof: {

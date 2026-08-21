@@ -253,14 +253,16 @@ export function ServiceHero({
                 delay: 0.12,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="relative col-span-7 aspect-[2/3] w-full overflow-hidden rounded-[20px] shadow-[0_20px_44px_rgba(14,92,238,0.10)] transition-transform duration-300 hover:scale-[1.01]"
+              className="relative col-span-7 aspect-[2/3] w-full overflow-hidden rounded-[24px] border border-slate-200/90 bg-white p-[5%] shadow-[0_20px_44px_rgba(14,92,238,0.10)] transition-transform duration-300 hover:scale-[1.01]"
             >
-              <VisualImage
-                src={mainImage}
-                alt={`${content.eyebrow ?? serviceKey} main visual`}
-                priority
-                className="h-full w-full object-cover"
-              />
+              <div className="relative h-full w-full overflow-hidden rounded-[14px]">
+                <VisualImage
+                  src={mainImage}
+                  alt={`${content.eyebrow ?? serviceKey} main visual`}
+                  priority
+                  className="h-full w-full object-contain"
+                />
+              </div>
             </motion.div>
 
             {/* Right stacked supporting visuals */}
@@ -275,13 +277,15 @@ export function ServiceHero({
                   duration: 0.75,
                   delay: 0.2,
                 }}
-                className="relative aspect-[2/3] w-full overflow-hidden rounded-[16px] shadow-[0_16px_36px_rgba(14,92,238,0.08)] transition-transform duration-300 hover:scale-[1.01]"
+                className="relative aspect-[2/3] w-full overflow-hidden rounded-[20px] border border-slate-200/90 bg-white p-[5%] shadow-[0_16px_36px_rgba(14,92,238,0.08)] transition-transform duration-300 hover:scale-[1.01]"
               >
-                <VisualImage
-                  src={secondaryImage}
-                  alt={`${content.eyebrow ?? serviceKey} supporting visual`}
-                  className="h-full w-full object-cover"
-                />
+                <div className="relative h-full w-full overflow-hidden rounded-[12px]">
+                  <VisualImage
+                    src={secondaryImage}
+                    alt={`${content.eyebrow ?? serviceKey} supporting visual`}
+                    className="h-full w-full object-contain"
+                  />
+                </div>
               </motion.div>
 
               {/* Supporting visual 2 */}
@@ -294,13 +298,15 @@ export function ServiceHero({
                   duration: 0.75,
                   delay: 0.27,
                 }}
-                className="relative aspect-[2/3] w-full overflow-hidden rounded-[16px] shadow-[0_16px_36px_rgba(14,92,238,0.08)] transition-transform duration-300 hover:scale-[1.01]"
+                className="relative aspect-[2/3] w-full overflow-hidden rounded-[20px] border border-slate-200/90 bg-white p-[5%] shadow-[0_16px_36px_rgba(14,92,238,0.08)] transition-transform duration-300 hover:scale-[1.01]"
               >
-                <VisualImage
-                  src={tertiaryImage}
-                  alt={`${content.eyebrow ?? serviceKey} secondary supporting visual`}
-                  className="h-full w-full object-cover"
-                />
+                <div className="relative h-full w-full overflow-hidden rounded-[12px]">
+                  <VisualImage
+                    src={tertiaryImage}
+                    alt={`${content.eyebrow ?? serviceKey} secondary supporting visual`}
+                    className="h-full w-full object-contain"
+                  />
+                </div>
               </motion.div>
             </div>
           </div>
