@@ -27,7 +27,7 @@ interface ContactSectionProps {
   mapsHref?: string;
 }
 
-export function ContactChannelsSection({
+function ContactChannelsSection({
   phone = PHONE_DISPLAY,
   phoneHref = `tel:${PHONE_LINK}`,
   whatsappHref = `https://wa.me/${WHATSAPP_LINK.replace("+", "")}?text=${encodeURIComponent("Hi, I found ADRIG through your website and I'd like to discuss a project.")}`,
