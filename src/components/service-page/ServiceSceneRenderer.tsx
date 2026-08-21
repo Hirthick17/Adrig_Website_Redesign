@@ -40,6 +40,7 @@ const SCENES: Record<ServiceKey, React.ComponentType> = {
   "data-analysis": DataAnalysisScene,
   software: SoftwareScene,
   consultation: ConsultationScene,
+  blockchain: ConsultationScene,
 };
 
 export function ServiceSceneRenderer({ serviceKey }: { serviceKey: ServiceKey }) {

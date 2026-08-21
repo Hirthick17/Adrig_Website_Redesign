@@ -5,7 +5,8 @@ export type ServiceKey =
   | "workflow"
   | "data-analysis"
   | "software"
-  | "consultation";
+  | "consultation"
+  | "blockchain";
 
 export type ProblemStep = {
   title: string;
