@@ -321,6 +321,39 @@ const VISUALS: Record<
       output: "Instant Settlement",
     },
   ],
+
+  "data-engineering": [
+    {
+      center: "Streaming Core",
+      sources: [
+        "Kafka",
+        "Spark",
+        "CDC",
+        "REST API",
+      ],
+      output: "Continuous Stream",
+    },
+    {
+      center: "Governed Lakehouse",
+      sources: [
+        "Iceberg",
+        "Parquet",
+        "Delta Lake",
+        "Schema Registry",
+      ],
+      output: "Governed Data",
+    },
+    {
+      center: "Sub-Second Engine",
+      sources: [
+        "Trino",
+        "ClickHouse",
+        "BI Queries",
+        "ML Inference",
+      ],
+      output: "Sub-100ms Query",
+    },
+  ],
 };
 
 const Node = forwardRef<
