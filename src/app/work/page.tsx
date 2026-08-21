@@ -20,8 +20,15 @@ const PROJECT_IMAGES = [
   "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1800&q=82",
 ];
 
-const getProjectImage = (index: number) =>
-  PROJECT_IMAGES[index % PROJECT_IMAGES.length];
+const getProjectImage = (index: number, slug?: string) => {
+  if (slug === "rail-rules" || slug === "ai-rule-clarifier") {
+    return "/images/work/ai-rule-classifier.png";
+  }
+  if (slug === "trackon" || slug === "track-on") {
+    return "/images/work/track-on.png";
+  }
+  return PROJECT_IMAGES[index % PROJECT_IMAGES.length];
+};
 
 /* =============================================================================
    PROJECT SCREEN
@@ -366,7 +373,7 @@ export default function WorkIndex() {
 
                 <div className="relative h-[52vh] min-h-[420px] w-full overflow-hidden bg-[#E9F0FB] lg:h-auto lg:min-h-[calc(100svh-72px)]">
                   <img
-                    src={getProjectImage(index)}
+                    src={getProjectImage(index, work.slug)}
                     alt={`${work.name} project`}
                     className="project-entry-image h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.035]"
                   />

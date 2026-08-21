@@ -72,7 +72,13 @@ const NEXT_PROJECT_VISUALS = [
   "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=1200&q=82",
 ];
 
-function getVisual(index: number) {
+function getVisual(index: number, slug?: string) {
+  if (slug === "rail-rules" || slug === "ai-rule-clarifier") {
+    return "/images/work/ai-rule-classifier.png";
+  }
+  if (slug === "trackon" || slug === "track-on") {
+    return "/images/work/track-on.png";
+  }
   return PROJECT_VISUALS[index % PROJECT_VISUALS.length];
 }
 
@@ -126,7 +132,7 @@ export default function CaseStudyTemplate({
 
   const featureImages = item.keyFeatures.map(
     (_, index) =>
-      getVisual(index + 1)
+      getVisual(index + 1, item.slug)
   );
 
   return (
@@ -294,9 +300,10 @@ export default function CaseStudyTemplate({
               <div className="relative aspect-[16/9] overflow-hidden rounded-t-[24px] bg-slate-950">
                 <img
                   src={getVisual(
-                    safeCurrentIndex
+                    safeCurrentIndex,
+                    item.slug
                   )}
-                  alt={`${item.name} product visual placeholder`}
+                  alt={`${item.name} product interface`}
                   className="h-full w-full object-cover"
                 />
 
@@ -305,7 +312,7 @@ export default function CaseStudyTemplate({
                 <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-8 p-6 sm:p-9">
                   <div>
                     <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-blue-200">
-                      Replace with actual product screenshot
+                      ADRIG / Live Deployment
                     </p>
 
                     <p className="mt-3 max-w-[680px] text-2xl font-normal tracking-[-0.04em] text-white sm:text-3xl">

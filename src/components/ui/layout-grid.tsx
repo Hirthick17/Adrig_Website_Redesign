@@ -54,7 +54,7 @@ export const LayoutGrid: React.FC<LayoutGridProps> = ({ cards }) => {
             onMouseLeave={() => setHoveredId(null)}
             whileHover={{ y: -4 }}
           >
-            {/* Visual Container with Transparent Background */}
+            {/* Visual Container with Clean White Background */}
             <div className="absolute inset-0 overflow-hidden bg-white h-full">
               {/* Soft ADRiG ambience glow */}
               <div
@@ -67,12 +67,12 @@ export const LayoutGrid: React.FC<LayoutGridProps> = ({ cards }) => {
                   -translate-x-1/2
                   -translate-y-1/2
                   rounded-full
-                  bg-[#0E5CEE]/[0.055]
+                  bg-[#0E5CEE]/[0.04]
                   blur-[70px]
                 "
               />
 
-              {/* Transparent illustration */}
+              {/* Clean illustration without shadow mask */}
               <img
                 src={encodeURI(card.thumbnail)}
                 alt=""
@@ -90,19 +90,6 @@ export const LayoutGrid: React.FC<LayoutGridProps> = ({ cards }) => {
                   duration-[800ms]
                   ease-[cubic-bezier(.2,.8,.2,1)]
                   group-hover:scale-[1.05]
-                "
-              />
-
-              {/* Bottom gradient for readability */}
-              <div
-                className="
-                  absolute
-                  inset-0
-                  bg-gradient-to-t
-                  from-[#061A3D]/90
-                  via-[#061A3D]/15
-                  via-[48%]
-                  to-transparent
                 "
               />
             </div>

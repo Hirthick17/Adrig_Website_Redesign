@@ -1,42 +1,85 @@
 "use client";
 
-import { useRef } from "react";
-import type { ReactNode } from "react";
-import type { LucideIcon } from "lucide-react";
+import React, {
+  forwardRef,
+  useMemo,
+  useRef,
+  type ComponentType,
+  type ReactNode,
+} from "react";
 
 import {
   Boxes,
   Braces,
   Check,
-  CloudCog,
+  ClipboardCheck,
+  CloudUpload,
+  Cog,
   Database,
+  Factory,
+  FileSpreadsheet,
   Gauge,
   GitBranch,
   Network,
+  PackageCheck,
+  RotateCcw,
   ScanSearch,
+  Server,
   ShieldCheck,
+  Users,
+  Workflow,
 } from "lucide-react";
 
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-} from "framer-motion";
-import type { MotionValue } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
-/* ============================================================
-   TYPES
-============================================================ */
+import { Timeline } from "@/components/ui/timeline";
+import { AnimatedBeam } from "@/components/ui/animated-beam";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
-type StageVisual =
-  | "discover"
-  | "architect"
-  | "build"
-  | "deploy";
+/* ============================================================================
+   ADRIG PROCESS SECTION
+   ----------------------------------------------------------------------------
+   VISUAL DIRECTION
 
-export type ProcessStage = {
+   The stage visual is adapted from the supplied scanner/tool-stack component:
+   - five circular system nodes
+   - staggered node sizes
+   - a vertical scanning beam moving horizontally
+   - a pixel/noise trail adjacent to the scanner
+   - radial fade/mask around the engineering stage
+
+   IMPORTANT:
+   - No hand-authored SVGs in this file.
+   - All system glyphs use Lucide components.
+   - Aceternity Timeline remains the page-level process backbone.
+   - Build retains the kanban information architecture.
+   - Architect retains the API / service / data / policy / observability context.
+============================================================================ */
+
+const BRAND = {
+  blue: "#1463FF",
+  blueSoft: "#EAF2FF",
+  blueFaint: "#F6F9FF",
+  ink: "#071126",
+  muted: "#5D6C84",
+  border: "#CFE0FA",
+  line: "#DCE8F8",
+  canvas: "#FAFCFF",
+};
+
+type IconType = ComponentType<{
+  className?: string;
+  strokeWidth?: number;
+}>;
+
+type ScanItem = {
+  icon: IconType;
+  label: string;
+  detail?: string;
+};
+
+type Stage = {
   number: string;
   label: string;
   title: string;
@@ -44,1591 +87,1234 @@ export type ProcessStage = {
   result: string;
   duration: string;
   outputs: string[];
-  visual: StageVisual;
-  icon: LucideIcon;
-
-  /*
-   * Kept for backward compatibility.
-   * This redesign does not require stage images.
-   */
-  image?: {
-    src: string;
-    alt: string;
-  };
+  content: ReactNode;
 };
 
-type AdrigProcessSectionProps = {
-  stages?: ProcessStage[];
-  className?: string;
-};
+/* ============================================================================
+   ROOT
+============================================================================ */
 
-/* ============================================================
-   PROCESS CONTENT
-============================================================ */
-
-export const PROCESS_STAGES: ProcessStage[] = [
-  {
-    number: "01",
-    label: "Discover",
-    title: "Map the operation before shaping the system.",
-    description:
-      "We trace decisions, data, handoffs, and failure points with the people who run the operation. The result is a shared picture of what must change—and what should stay untouched.",
-    result:
-      "A scoped problem with evidence, owners, and success measures.",
-    duration: "1–2 weeks",
-    outputs: [
-      "Operational map",
-      "Data inventory",
-      "Decision brief",
-    ],
-    visual: "discover",
-    icon: ScanSearch,
-  },
-
-  {
-    number: "02",
-    label: "Architect",
-    title:
-      "Turn the operating reality into a buildable system.",
-    description:
-      "We define boundaries, integrations, intelligence layers, observability, security, and deployment constraints before expensive implementation begins.",
-    result:
-      "An architecture the business and engineering teams can both verify.",
-    duration: "1–2 weeks",
-    outputs: [
-      "System architecture",
-      "Integration plan",
-      "Risk register",
-    ],
-    visual: "architect",
-    icon: Boxes,
-  },
-
-  {
-    number: "03",
-    label: "Build",
-    title:
-      "Ship working modules in short, reviewable cycles.",
-    description:
-      "Each cycle connects production-like data, tests one valuable workflow, and puts the result in front of stakeholders. Progress is demonstrated in software—not slides.",
-    result:
-      "Tested modules with visible progress and accountable decisions.",
-    duration: "2-week cycles",
-    outputs: [
-      "Working increments",
-      "Evaluation results",
-      "Technical record",
-    ],
-    visual: "build",
-    icon: Braces,
-  },
-
-  {
-    number: "04",
-    label: "Deploy",
-    title:
-      "Enter production with evidence, controls, and ownership.",
-    description:
-      "Monitoring, alerts, rollback paths, documentation, and team handover are part of deployment—not work postponed until after launch.",
-    result:
-      "An observable production system your team can operate confidently.",
-    duration: "Release + handover",
-    outputs: [
-      "Production release",
-      "Observability pack",
-      "Runbook & handover",
-    ],
-    visual: "deploy",
-    icon: CloudCog,
-  },
-];
-
-/* ============================================================
-   MAIN PROCESS ORCHESTRATION
-
-   IMPORTANT:
-   - One shared section background.
-   - One continuous process rail across ALL stages.
-   - The rail is driven by ONE section-level scroll progress.
-   - Each stage reveal is driven by its own local scroll progress.
-   - Existing Discover / Architect / Build / Deploy artifacts below
-     are intentionally reused without redesigning them.
-============================================================ */
-
-const PROCESS_RAIL_DESKTOP =
-  "M82 40 V500 V1000 H918 V1500 V2000 H82 V2500 V3000 H918 V3500 V3960";
-
-const PROCESS_RAIL_MOBILE = "M54 40 V3960";
-
-const PROCESS_SIDES = ["left", "right", "left", "right"] as const;
-
-type ProcessSide = (typeof PROCESS_SIDES)[number];
-
-export function AdrigProcessSection({
-  stages = PROCESS_STAGES,
-  className = "",
-}: AdrigProcessSectionProps) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const stagesRef = useRef<HTMLDivElement>(null);
+export default function AdrigProcessSection() {
   const reduceMotion = useReducedMotion();
 
-  /*
-   * SINGLE SOURCE OF TRUTH FOR THE CONNECTING LINE.
-   *
-   * Unlike the previous implementation, the transition line is not
-   * owned by individual cards. It belongs to the complete process stack.
-   * As the user scrolls through Discover -> Architect -> Build -> Deploy,
-   * this one value advances the same SVG path.
-   */
-  const { scrollYProgress: rawRailProgress } = useScroll({
-    target: stagesRef,
-    offset: ["start 78%", "end 22%"],
-  });
+  const stages = useMemo<Stage[]>(
+    () => [
+      {
+        number: "01",
+        label: "Discover",
+        title: "Map the operation before shaping the system.",
+        description:
+          "We trace decisions, data, handoffs, and failure points with the people who run the operation. The result is a shared picture of what must change—and what should stay untouched.",
+        result:
+          "A scoped problem with evidence, owners, and success measures.",
+        duration: "1–2 weeks",
+        outputs: ["Operational map", "Data inventory", "Decision brief"],
+        content: <DiscoverSystem reduceMotion={Boolean(reduceMotion)} />,
+      },
+      {
+        number: "02",
+        label: "Architect",
+        title: "Turn the operating reality into a buildable system.",
+        description:
+          "We define boundaries, integrations, intelligence layers, observability, security, and deployment constraints before expensive implementation begins.",
+        result:
+          "An architecture the business and engineering teams can both verify.",
+        duration: "1–2 weeks",
+        outputs: ["System architecture", "Integration plan", "Risk register"],
+        content: <ArchitectSystem reduceMotion={Boolean(reduceMotion)} />,
+      },
+      {
+        number: "03",
+        label: "Build",
+        title: "Ship working modules in short, reviewable cycles.",
+        description:
+          "Each cycle connects production-like data, tests one valuable workflow, and puts the result in front of stakeholders. Progress is demonstrated in software—not slides.",
+        result:
+          "Tested modules with visible progress and accountable decisions.",
+        duration: "2-week cycles",
+        outputs: ["Working increments", "Evaluation results", "Technical record"],
+        content: <BuildSystem reduceMotion={Boolean(reduceMotion)} />,
+      },
+      {
+        number: "04",
+        label: "Deploy",
+        title: "Enter production with evidence, controls, and ownership.",
+        description:
+          "Monitoring, alerts, rollback paths, documentation, and team handover are part of deployment—not work postponed until after launch.",
+        result:
+          "An observable production system your team can operate confidently.",
+        duration: "Release + handover",
+        outputs: ["Production release", "Observability pack", "Runbook & handover"],
+        content: <DeploySystem reduceMotion={Boolean(reduceMotion)} />,
+      },
+    ],
+    [reduceMotion],
+  );
 
-  const railProgress = useSpring(rawRailProgress, {
-    stiffness: 125,
-    damping: 28,
-    mass: 0.22,
-  });
+  const timelineData = stages.map((stage) => ({
+    title: `${stage.number}  ${stage.label}`,
+    content: <StageContent stage={stage} />,
+  }));
 
   return (
     <section
-      ref={sectionRef}
       id="how-we-work"
-      aria-labelledby="process-heading"
-      className={`relative overflow-hidden border-b border-slate-200/70 bg-[#FAFCFF] ${className}`}
+      aria-labelledby="adrig-process-heading"
+      className="relative overflow-hidden border-y border-slate-200/70 bg-[#FAFCFF]"
     >
-      {/* ONE COMMON BACKGROUND FOR THE COMPLETE PROCESS */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(20,99,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(20,99,255,0.035)_1px,transparent_1px)] [background-size:64px_64px]"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(20,99,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(20,99,255,0.035)_1px,transparent_1px)] [background-size:72px_72px]"
       />
 
-      <div className="relative z-10 mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
-        {/* HEADER */}
-        <motion.header
-          initial={
-            reduceMotion
-              ? false
-              : {
-                  opacity: 0,
-                  y: 26,
-                }
-          }
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          viewport={{
-            once: true,
-            amount: 0.25,
-          }}
-          transition={{
-            duration: 0.72,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          className="pb-20 pt-24 sm:pb-24 sm:pt-32"
+      <div className="relative z-10 mx-auto max-w-[1600px] px-5 pb-8 pt-24 sm:px-8 sm:pt-32 lg:px-12">
+        <motion.div
+          initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.35 }}
+          transition={{ duration: 0.58, ease: [0.22, 1, 0.36, 1] }}
+          className="mx-auto max-w-[1120px] text-center"
         >
-          <div className="grid gap-8 lg:grid-cols-[0.34fr_1.66fr]">
-            <p className="text-sm font-medium text-[#1463FF]">
-              How we work
-            </p>
+          <p className="text-sm font-semibold text-[#1463FF]">How we work</p>
 
-            <div>
-              <h2
-                id="process-heading"
-                className="max-w-[1080px] text-[clamp(3.2rem,5.8vw,6.6rem)] font-normal leading-[0.93] tracking-[-0.067em] text-slate-950"
-              >
-                One process.
-                <span className="block text-[#1463FF]">
-                  One continuous evidence trail.
-                </span>
-              </h2>
+          <h2
+            id="adrig-process-heading"
+            className="mt-5 text-[clamp(3rem,5.3vw,5.9rem)] font-normal leading-[0.93] tracking-[-0.065em] text-[#071126]"
+          >
+            One engineering process.
+            <span className="block text-[#1463FF]">
+              Evidence moves with the system.
+            </span>
+          </h2>
 
-              <p className="mt-7 max-w-[720px] text-base leading-8 text-slate-600 sm:text-lg">
-                Discover, architect, build and deploy are not separate islands.
-                Each stage hands evidence to the next one.
-              </p>
-            </div>
-          </div>
-        </motion.header>
+          <p className="mx-auto mt-7 max-w-[720px] text-base leading-8 text-slate-600 sm:text-lg">
+            Discover, architect, build, and deploy are one production path—not
+            four disconnected workshops.
+          </p>
+        </motion.div>
+      </div>
 
-        {/*
-         * STAGE STACK + ONE SHARED RAIL
-         *
-         * The SVG stretches to the full stack height. The geometry is
-         * deliberately serpentine:
-         *   Stage 01 -> left vertical
-         *   transition -> left-to-right horizontal
-         *   Stage 02 -> right vertical
-         *   transition -> right-to-left horizontal
-         *   Stage 03 -> left vertical
-         *   transition -> left-to-right horizontal
-         *   Stage 04 -> right vertical
-         */}
-        <div ref={stagesRef} className="relative">
-          <SharedProcessRail
-            progress={railProgress}
-            reduceMotion={Boolean(reduceMotion)}
-          />
-
-          <div className="relative z-10">
-            {stages.map((stage, index) => (
-              <ProcessStageScene
-                key={stage.number}
-                stage={stage}
-                index={index}
-                side={PROCESS_SIDES[index] ?? "left"}
-              />
-            ))}
-          </div>
-        </div>
+      <div className="relative z-10 mx-auto max-w-[1600px]">
+        <Timeline data={timelineData} />
       </div>
     </section>
   );
 }
 
-/* ============================================================
-   ONE CONTINUOUS LINE ACROSS ALL STAGES
-============================================================ */
+/* ============================================================================
+   STAGE COPY
+============================================================================ */
 
-function SharedProcessRail({
-  progress,
-  reduceMotion,
-}: {
-  progress: MotionValue<number>;
-  reduceMotion: boolean;
-}) {
-  return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 z-0"
-    >
-      {/* DESKTOP SERPENTINE RAIL */}
-      <svg
-        viewBox="0 0 1000 4000"
-        preserveAspectRatio="none"
-        className="hidden h-full w-full lg:block"
-      >
-        {/* faint guide */}
-        <path
-          d={PROCESS_RAIL_DESKTOP}
-          fill="none"
-          stroke="#C9D8EC"
-          strokeWidth="2"
-          vectorEffect="non-scaling-stroke"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-
-        {/* live scroll-driven rail */}
-        <motion.path
-          d={PROCESS_RAIL_DESKTOP}
-          fill="none"
-          stroke="#1463FF"
-          strokeWidth="3"
-          vectorEffect="non-scaling-stroke"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          style={{
-            pathLength: reduceMotion ? 1 : progress,
-          }}
-        />
-      </svg>
-
-      {/* MOBILE: same process becomes one simple vertical trace */}
-      <svg
-        viewBox="0 0 100 4000"
-        preserveAspectRatio="none"
-        className="h-full w-full lg:hidden"
-      >
-        <path
-          d={PROCESS_RAIL_MOBILE}
-          fill="none"
-          stroke="#C9D8EC"
-          strokeWidth="2"
-          vectorEffect="non-scaling-stroke"
-          strokeLinecap="round"
-        />
-
-        <motion.path
-          d={PROCESS_RAIL_MOBILE}
-          fill="none"
-          stroke="#1463FF"
-          strokeWidth="3"
-          vectorEffect="non-scaling-stroke"
-          strokeLinecap="round"
-          style={{
-            pathLength: reduceMotion ? 1 : progress,
-          }}
-        />
-      </svg>
-    </div>
-  );
-}
-
-/* ============================================================
-   INDIVIDUAL PROCESS SCENE
-
-   The scene does NOT own the connecting rail.
-   It only owns its reveal/focus animation.
-============================================================ */
-
-function ProcessStageScene({
-  stage,
-  index,
-  side,
-}: {
-  stage: ProcessStage;
-  index: number;
-  side: ProcessSide;
-}) {
-  const stageRef = useRef<HTMLElement>(null);
+function StageContent({ stage }: { stage: Stage }) {
   const reduceMotion = useReducedMotion();
-  const StageIcon = stage.icon;
 
-  /*
-   * LOCAL STAGE PROGRESS.
-   *
-   * This drives opacity / position for the current stage only.
-   * It does not reset or restart the shared process rail.
-   */
-  const { scrollYProgress: rawStageProgress } = useScroll({
-    target: stageRef,
-    offset: ["start 82%", "end 18%"],
-  });
-
-  const stageProgress = useSpring(rawStageProgress, {
-    stiffness: 140,
-    damping: 30,
-    mass: 0.22,
-  });
-
-  const stageOpacity = useTransform(
-    stageProgress,
-    [0, 0.12, 0.76, 1],
-    [0.16, 1, 1, 0.24]
-  );
-
-  const stageY = useTransform(
-    stageProgress,
-    [0, 0.22, 0.82, 1],
-    [34, 0, 0, -24]
-  );
-
-  const copyX = useTransform(
-    stageProgress,
-    [0.02, 0.24],
-    [side === "left" ? -22 : 22, 0]
-  );
-
-  const visualX = useTransform(
-    stageProgress,
-    [0.08, 0.32],
-    [side === "left" ? 28 : -28, 0]
-  );
-
-  const visualScale = useTransform(
-    stageProgress,
-    [0.08, 0.35],
-    [0.975, 1]
-  );
-
-  const markerScale = useTransform(
-    stageProgress,
-    [0.04, 0.18],
-    [0.65, 1]
-  );
-
-  const markerOpacity = useTransform(
-    stageProgress,
-    [0.03, 0.16],
-    [0.25, 1]
-  );
-
-  const textFirst = side === "left";
+  if (stage.label === "Architect") {
+    return (
+      <ArchitectStageContent
+        stage={stage}
+        reduceMotion={Boolean(reduceMotion)}
+      />
+    );
+  }
 
   return (
-    <article
-      ref={stageRef}
-      id={`process-stage-${index}`}
-      className="relative min-h-[126svh] border-t border-slate-200/80 first:border-t-0"
+    <motion.article
+      initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.14 }}
+      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+      className="pb-16 sm:pb-24 [font-family:Inter,ui-sans-serif,system-ui,sans-serif]"
     >
-      {/*
-       * sticky scene gives the stage enough scroll distance to reveal,
-       * remain readable, then hand focus to the following process.
-       */}
-      <motion.div
-        style={
-          reduceMotion
-            ? undefined
-            : {
-                opacity: stageOpacity,
-                y: stageY,
-              }
-        }
-        className="relative py-16 sm:py-20 lg:sticky lg:top-[92px] lg:flex lg:h-[calc(100svh-112px)] lg:items-center lg:py-5"
-      >
-        {/* point + process heading attached to the shared line */}
-        <StageRailMarker
-          stage={stage}
-          side={side}
-          scale={markerScale}
-          opacity={markerOpacity}
-          reduceMotion={Boolean(reduceMotion)}
-        />
+      <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:gap-12 xl:gap-16">
+        <div className="min-w-0 max-w-[620px]">
+          <div className="flex flex-wrap items-center gap-3">
+            <Badge
+              variant="outline"
+              className="rounded-full border-[#CFE0FA] bg-white px-4 py-2 text-sm font-semibold text-[#1463FF]"
+            >
+              {stage.duration}
+            </Badge>
 
-        <div
-          className={`grid w-full items-center gap-12 lg:grid-cols-2 lg:gap-16 ${
-            side === "left"
-              ? "lg:pl-[12%] lg:pr-[6%]"
-              : "lg:pl-[6%] lg:pr-[12%]"
-          }`}
-        >
-          {/* TEXT IS ALWAYS NEAREST THE ACTIVE RAIL */}
-          <motion.div
-            style={
-              reduceMotion
-                ? undefined
-                : {
-                    x: copyX,
-                  }
-            }
-            className={textFirst ? "lg:order-1" : "lg:order-2"}
-          >
-            <div className="flex items-center gap-3">
-              <span className="flex h-11 w-11 items-center justify-center rounded-full border border-[#BFD3F4] bg-white text-[#1463FF]">
-                <StageIcon className="h-5 w-5" />
-              </span>
+            <span className="text-sm font-semibold text-[#1463FF]">
+              {stage.label}
+            </span>
+          </div>
 
-              <span className="text-sm font-semibold text-[#1463FF]">
-                {stage.duration}
-              </span>
-            </div>
+          <h3 className="mt-7 max-w-[620px] text-[clamp(2.45rem,4.2vw,4.95rem)] font-normal leading-[0.96] tracking-[-0.06em] text-[#071126]">
+            {stage.title}
+          </h3>
 
-            <h3 className="mt-8 max-w-[680px] text-[clamp(2.7rem,4.5vw,5.2rem)] font-normal leading-[0.95] tracking-[-0.06em] text-slate-950">
-              {stage.title}
-            </h3>
+          <p className="mt-6 max-w-[600px] text-base leading-8 text-[#5D6C84] sm:text-lg">
+            {stage.description}
+          </p>
 
-            <p className="mt-7 max-w-[620px] text-base leading-8 text-slate-600 sm:text-lg">
-              {stage.description}
+          <Separator className="my-7 max-w-[620px] bg-[#DCE8F8]" />
+
+          <div className="border-l-2 border-[#1463FF] pl-5 sm:pl-6">
+            <p className="max-w-[590px] text-xl leading-8 tracking-[-0.03em] text-[#172033] sm:text-2xl">
+              {stage.result}
             </p>
+          </div>
 
-            <div className="mt-9 border-t border-slate-200 pt-6">
-              <p className="max-w-[620px] text-xl leading-8 tracking-[-0.03em] text-slate-800 sm:text-2xl">
-                {stage.result}
-              </p>
-            </div>
-
-            <ul className="mt-8 flex flex-wrap gap-3">
-              {stage.outputs.map((output) => (
-                <li
-                  key={output}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-full border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700"
-                >
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#1463FF] text-white">
-                    <Check className="h-3 w-3" strokeWidth={3} />
-                  </span>
-
-                  {output}
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-
-          {/*
-           * IMPORTANT: the ORIGINAL artifact functions are reused.
-           * ArchitectArtifact + BuildArtifact remain exactly the system
-           * design and Kanban board from the supplied file.
-           */}
-          <motion.div
-            style={
-              reduceMotion
-                ? undefined
-                : {
-                    x: visualX,
-                    scale: visualScale,
-                  }
-            }
-            className={textFirst ? "lg:order-2" : "lg:order-1"}
-          >
-            <div className="relative mx-auto min-h-[560px] w-full max-w-[820px] overflow-hidden rounded-[30px] border border-slate-200 bg-white shadow-[0_22px_60px_rgba(15,23,42,0.055)]">
-              {stage.visual === "discover" && (
-                <DiscoverArtifact reduceMotion={Boolean(reduceMotion)} />
-              )}
-
-              {stage.visual === "architect" && (
-                <ArchitectArtifact reduceMotion={Boolean(reduceMotion)} />
-              )}
-
-              {stage.visual === "build" && (
-                <BuildArtifact reduceMotion={Boolean(reduceMotion)} />
-              )}
-
-              {stage.visual === "deploy" && (
-                <DeployArtifact reduceMotion={Boolean(reduceMotion)} />
-              )}
-            </div>
-          </motion.div>
+          <ul className="mt-7 flex flex-wrap gap-2.5">
+            {stage.outputs.map((output) => (
+              <li
+                key={output}
+                className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#EAF2FF] px-4 text-sm font-medium text-[#164EA9]"
+              >
+                <Check className="h-4 w-4 text-[#1463FF]" strokeWidth={2.4} />
+                {output}
+              </li>
+            ))}
+          </ul>
         </div>
-      </motion.div>
-    </article>
+
+        <div className="min-w-0">
+          <div className="rounded-[28px] border border-[#DCE8F8] bg-white/40 p-4 shadow-[0_20px_60px_-48px_rgba(13,66,170,0.24)] backdrop-blur-[2px] sm:p-6">
+            {stage.content}
+          </div>
+        </div>
+      </div>
+    </motion.article>
   );
 }
 
-/* ============================================================
-   STAGE MARKER ON SHARED RAIL
-============================================================ */
-
-function StageRailMarker({
+function ArchitectStageContent({
   stage,
-  side,
-  scale,
-  opacity,
   reduceMotion,
 }: {
-  stage: ProcessStage;
-  side: ProcessSide;
-  scale: MotionValue<number>;
-  opacity: MotionValue<number>;
+  stage: Stage;
   reduceMotion: boolean;
 }) {
-  const isLeft = side === "left";
-
   return (
-    <div
-      className={`absolute top-1/2 z-30 hidden -translate-y-1/2 lg:block ${
-        isLeft
-          ? "left-[8.2%] -translate-x-1/2"
-          : "right-[8.2%] translate-x-1/2"
-      }`}
+    <motion.article
+      initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.18 }}
+      transition={{ duration: 0.58, ease: [0.22, 1, 0.36, 1] }}
+      className="pb-16 sm:pb-24 [font-family:Inter,ui-sans-serif,system-ui,sans-serif]"
     >
-      <motion.div
-        style={
-          reduceMotion
-            ? undefined
-            : {
-                scale,
-                opacity,
-              }
-        }
-        className={`flex items-center gap-4 ${
-          isLeft ? "" : "flex-row-reverse"
-        }`}
-      >
-        {/* point */}
-        <span className="relative flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full border-[3px] border-[#1463FF] bg-[#FAFCFF]">
-          <span className="h-2 w-2 rounded-full bg-[#1463FF]" />
-        </span>
+      <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-12 xl:gap-16">
+        {/* COPY — deliberately clean: no output chips / dialog pills. */}
+        <div className="min-w-0 max-w-[620px]">
+          <div className="flex items-center gap-3 text-sm font-semibold text-[#1463FF]">
+            <span>{stage.label}</span>
+            <span className="h-1 w-1 rounded-full bg-[#9CBDF5]" />
+            <span className="text-[#657995]">{stage.duration}</span>
+          </div>
 
-        {/* process name attached to the point */}
-        <span
-          className={`whitespace-nowrap bg-[#FAFCFF] px-2 text-[clamp(1.05rem,1.5vw,1.35rem)] font-semibold tracking-[-0.025em] text-[#1463FF] ${
-            isLeft ? "text-left" : "text-right"
-          }`}
-        >
-          {stage.label}
-        </span>
-      </motion.div>
-    </div>
+          <h3 className="mt-6 text-[clamp(2.65rem,4.25vw,5rem)] font-normal leading-[0.95] tracking-[-0.06em] text-[#071126]">
+            {stage.title}
+          </h3>
+
+          <p className="mt-7 max-w-[580px] text-base leading-8 text-[#5D6C84] sm:text-lg">
+            {stage.description}
+          </p>
+
+          <div className="mt-8 border-l-2 border-[#1463FF] pl-5 sm:pl-6">
+            <p className="max-w-[560px] text-xl leading-8 tracking-[-0.03em] text-[#172033] sm:text-2xl">
+              {stage.result}
+            </p>
+          </div>
+        </div>
+
+        {/* INFOGRAPHIC — 2D, wider for optimal readability. */}
+        <div className="min-w-0">
+          <div className="rounded-[28px] border border-[#DCE8F8] bg-white/40 p-4 shadow-[0_20px_60px_-48px_rgba(13,66,170,0.24)] backdrop-blur-[2px] sm:p-6">
+            {stage.content}
+          </div>
+        </div>
+      </div>
+    </motion.article>
   );
 }
 
-/* ============================================================
-   01 — DISCOVER
-   LARGE RESEARCH / MAPPING BOARD
-============================================================ */
+/* ============================================================================
+   SCANNER PRIMITIVE
+   ----------------------------------------------------------------------------
+   This is the reusable adaptation of the supplied component.
+   The system nodes are Lucide icons, not embedded custom SVG logos.
+============================================================================ */
 
-function DiscoverArtifact({
+function EngineeringScanner({
+  items,
+  status,
+  substatus,
   reduceMotion,
+  centerLabel,
 }: {
+  items: ScanItem[];
+  status: string;
+  substatus: string;
   reduceMotion: boolean;
+  centerLabel?: string;
 }) {
-  const notes = [
-    {
-      label: "DATA",
-      title: "Customer records",
-      detail: "CRM · tickets · history",
-      x: "6%",
-      y: "14%",
-      rotate: -2,
-    },
-
-    {
-      label: "SYSTEM",
-      title: "Legacy ERP",
-      detail: "SAP · internal APIs",
-      x: "67%",
-      y: "13%",
-      rotate: 2,
-    },
-
-    {
-      label: "WORKFLOW",
-      title: "Manual review",
-      detail: "4 handoffs · 2 approvals",
-      x: "7%",
-      y: "65%",
-      rotate: 2,
-    },
-
-    {
-      label: "SIGNAL",
-      title: "Slow response",
-      detail: "34 min average delay",
-      x: "69%",
-      y: "65%",
-      rotate: -2,
-    },
+  const sizes = [
+    "h-10 w-10 sm:h-12 sm:w-12",
+    "h-12 w-12 sm:h-16 sm:w-16",
+    "h-16 w-16 sm:h-20 sm:w-20",
+    "h-12 w-12 sm:h-16 sm:w-16",
+    "h-10 w-10 sm:h-12 sm:w-12",
   ];
 
   return (
-    <div className="relative h-full min-h-[600px] w-full overflow-hidden bg-[#0E5CEE] px-6 py-8 sm:px-10">
-      {/* dotted working canvas */}
+    <div className="relative isolate min-h-[250px] overflow-hidden py-6 sm:min-h-[290px] sm:py-8">
+      {/* radial engineering field */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-[4%] top-4 h-[270px] rounded-[36px] bg-[radial-gradient(circle_at_center,rgba(20,99,255,0.075),rgba(20,99,255,0.015)_46%,transparent_76%)] [mask-image:radial-gradient(60%_64%_at_50%_50%,black_0%,transparent_100%)] sm:h-[320px]"
+      />
 
-      <div className="absolute inset-0 bg-[radial-gradient(circle,rgba(255,255,255,0.24)_1px,transparent_1px)] [background-size:26px_26px]" />
+      {/* system nodes */}
+      <div className="relative z-20 mx-auto flex max-w-[860px] items-center justify-center gap-3 px-2 sm:gap-5 md:gap-8">
+        {items.map((item, index) => {
+          const Icon = item.icon;
 
-      {/* relationship lines */}
+          return (
+            <motion.div
+              key={`${item.label}-${index}`}
+              animate={
+                reduceMotion
+                  ? undefined
+                  : {
+                      y: [0, index === 2 ? -5 : -3, 0],
+                      scale: [1, index === 2 ? 1.035 : 1.02, 1],
+                    }
+              }
+              transition={{
+                duration: 4.8,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: index * 0.16,
+              }}
+              className="flex min-w-0 flex-col items-center"
+            >
+              <div
+                className={[
+                  "relative flex shrink-0 items-center justify-center rounded-full border border-[#BFD3F3] bg-white text-[#1463FF]",
+                  "shadow-[0_14px_34px_-24px_rgba(20,99,255,0.65),inset_0_0_0_1px_rgba(20,99,255,0.035)]",
+                  sizes[index] ?? sizes[2],
+                  index === 2 ? "border-[#1463FF] bg-[#EAF2FF]" : "",
+                ].join(" ")}
+              >
+                <Icon
+                  className={
+                    index === 2
+                      ? "h-7 w-7 sm:h-9 sm:w-9"
+                      : "h-5 w-5 sm:h-6 sm:w-6"
+                  }
+                  strokeWidth={1.75}
+                />
 
-      <div className="absolute left-[22%] top-[31%] h-px w-[28%] rotate-[8deg] border-t border-dashed border-white/35" />
+                {index === 2 ? (
+                  <span className="absolute -bottom-2 h-2.5 w-2.5 rounded-full border-2 border-white bg-[#1463FF]" />
+                ) : null}
+              </div>
 
-      <div className="absolute right-[24%] top-[31%] h-px w-[25%] -rotate-[8deg] border-t border-dashed border-white/35" />
+              <span
+                className={[
+                  "mt-3 max-w-[110px] text-center text-[11px] font-semibold leading-4 sm:text-xs",
+                  index === 2 ? "text-[#164EA9]" : "text-[#6D7D95]",
+                ].join(" ")}
+              >
+                {item.label}
+              </span>
+            </motion.div>
+          );
+        })}
+      </div>
 
-      <div className="absolute bottom-[27%] left-[22%] h-px w-[28%] -rotate-[8deg] border-t border-dashed border-white/35" />
-
-      <div className="absolute bottom-[27%] right-[24%] h-px w-[25%] rotate-[8deg] border-t border-dashed border-white/35" />
-
-      {/* larger notes */}
-
-      {notes.map((note, index) => (
+      {/* moving scanner + pixel trail */}
+      {!reduceMotion ? (
         <motion.div
-          key={note.title}
-          initial={
-            reduceMotion
-              ? false
-              : {
-                  opacity: 0,
-                  y: 20,
-                  rotate: 0,
-                }
-          }
-          whileInView={{
-            opacity: 1,
-            y: 0,
-            rotate: note.rotate,
-          }}
-          viewport={{
-            once: true,
-          }}
-          transition={{
-            duration: 0.55,
-            delay: index * 0.08,
-            ease: "easeInOut",
-          }}
-          style={{
-            left: note.x,
-            top: note.y,
-          }}
-          className="absolute z-10 w-[160px] rounded-[18px] border border-white/20 bg-[#0A4BCB] p-5 text-white shadow-[0_12px_28px_rgba(4,30,92,0.20)] sm:w-[240px] sm:p-6"
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-7 left-1/2 z-30 w-full -translate-x-1/2"
+          animate={{ x: ["-43%", "43%", "-43%"] }}
+          transition={{ duration: 8.5, repeat: Infinity, ease: "easeInOut" }}
         >
-          <p className="font-mono text-[9px] tracking-[0.15em] text-white/60 sm:text-[10px]">
-            {note.label}
-          </p>
+          <div className="absolute left-1/2 top-0 h-[230px] w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-[#1463FF] to-transparent sm:h-[280px]" />
 
-          <p className="mt-3 text-base font-semibold tracking-[-0.025em] text-white sm:text-xl">
-            {note.title}
-          </p>
-
-          <p className="mt-2 text-[10px] text-white/55 sm:text-xs">
-            {note.detail}
-          </p>
-
-          <div className="mt-5 h-1.5 w-[76%] rounded-full bg-white/14" />
-
-          <div className="mt-2 h-1.5 w-[52%] rounded-full bg-white/10" />
+          <div className="absolute left-[calc(50%-44px)] top-1/2 grid h-[118px] w-[42px] -translate-y-1/2 grid-cols-4 gap-[3px] opacity-70 [mask-image:linear-gradient(to_left,black,transparent)]">
+            {Array.from({ length: 40 }).map((_, i) => (
+              <span
+                key={i}
+                className="block h-[4px] w-[4px] rounded-[1px] bg-[#1463FF]"
+                style={{
+                  opacity:
+                    i % 7 === 0
+                      ? 0.9
+                      : i % 5 === 0
+                        ? 0.68
+                        : i % 3 === 0
+                          ? 0.46
+                          : 0.22,
+                }}
+              />
+            ))}
+          </div>
         </motion.div>
-      ))}
+      ) : null}
 
-      {/* central focus — around 40% larger */}
+      {/* machine rail */}
+      <div className="relative z-10 mx-auto mt-12 flex max-w-[860px] items-center px-4 sm:mt-16">
+        <span className="h-2.5 w-2.5 shrink-0 rounded-full border-2 border-[#1463FF] bg-white" />
+        <div className="h-px flex-1 bg-[#CFE0FA]" />
+        <span className="mx-3 font-mono text-[10px] uppercase tracking-[0.16em] text-[#7890B8]">
+          {centerLabel ?? "system scan"}
+        </span>
+        <div className="h-px flex-1 bg-[#CFE0FA]" />
+        <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#1463FF]" />
+      </div>
 
       <motion.div
-        initial={
-          reduceMotion
-            ? false
-            : {
-                opacity: 0,
-                scale: 0.94,
-                y: 18,
-              }
-        }
-        whileInView={{
-          opacity: 1,
-          scale: 1,
-          y: 0,
-        }}
-        viewport={{
-          once: true,
-        }}
-        transition={{
-          duration: 0.65,
-          delay: 0.24,
-          ease: "easeInOut",
-        }}
-        className="absolute left-1/2 top-1/2 z-20 w-[280px] -translate-x-1/2 -translate-y-1/2 rounded-[24px] border border-white/30 bg-[#073B9B] p-6 text-white shadow-[0_24px_55px_rgba(3,27,81,0.28)] sm:w-[420px] sm:p-8"
+        initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.5 }}
+        transition={{ duration: 0.45 }}
+        className="relative z-20 mx-auto mt-7 max-w-[720px] text-center"
       >
-        <div className="flex items-center justify-between">
-          <span className="font-mono text-[9px] uppercase tracking-[0.17em] text-white/60">
-            Current focus
-          </span>
-
-          <ScanSearch className="h-5 w-5 text-white" />
-        </div>
-
-        <p className="mt-5 text-xl font-semibold tracking-[-0.035em] text-white sm:text-2xl">
-          Support workflow analysis
+        <p className="text-lg font-semibold tracking-[-0.025em] text-[#123365] sm:text-xl">
+          {status}
         </p>
-
-        <p className="mt-2 max-w-[320px] text-xs leading-5 text-white/60 sm:text-sm">
-          Mapping where fragmented knowledge creates
-          response latency.
+        <p className="mt-2 text-sm leading-6 text-[#71809A] sm:text-base">
+          {substatus}
         </p>
-
-        <div className="mt-7 space-y-3">
-          <div className="h-2 w-full rounded-full bg-white/15" />
-
-          <div className="h-2 w-[88%] rounded-full bg-white/15" />
-
-          <div className="rounded-[8px] border border-white/15 bg-white/10 px-3 py-2.5">
-            <div className="h-2 w-[75%] rounded-full bg-white/55" />
-          </div>
-
-          <div className="h-2 w-[62%] rounded-full bg-white/15" />
-        </div>
-
-        <div className="mt-7 flex flex-wrap gap-2">
-          <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 font-mono text-[8px] text-white/75">
-            owner identified
-          </span>
-
-          <span className="rounded-full bg-white px-3 py-1.5 font-mono text-[8px] font-semibold text-[#0E5CEE]">
-            bottleneck
-          </span>
-        </div>
       </motion.div>
     </div>
   );
 }
 
-/* ============================================================
-   02 — ARCHITECT
-   FULLY CONNECTED SYSTEM ARCHITECTURE
-============================================================ */
+/* ============================================================================
+   01 DISCOVER
+============================================================================ */
 
-function ArchitectArtifact({
+function DiscoverSystem({ reduceMotion }: { reduceMotion: boolean }) {
+  return (
+    <div className="relative overflow-hidden">
+      <EngineeringScanner
+        reduceMotion={reduceMotion}
+        centerLabel="operating surface"
+        status="Turn tribal knowledge into an inspectable operating model."
+        substatus="People, spreadsheets, handoffs, and source systems are scanned as one real workflow—not as separate departments."
+        items={[
+          { icon: Factory, label: "Operating floor" },
+          { icon: FileSpreadsheet, label: "Manual records" },
+          { icon: ScanSearch, label: "Inspect + map" },
+          { icon: Users, label: "Human handoffs" },
+          { icon: Database, label: "Source systems" },
+        ]}
+      />
+
+      <div className="mx-auto grid max-w-[760px] gap-3 px-1 pb-2 sm:grid-cols-3">
+        <SignalFact icon={Workflow} value="Flow" label="What moves where" />
+        <SignalFact icon={Users} value="Owners" label="Who decides" />
+        <SignalFact icon={ClipboardCheck} value="Evidence" label="What proves it" />
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================================
+   02 ARCHITECT
+   ----------------------------------------------------------------------------
+   2D VERTICAL ARCHITECTURE STACK
+
+   - Copy is rendered on the left by ArchitectStageContent.
+   - This component owns ONLY the right-side infographic.
+   - No isometric transforms, no oversized blocks, no floating dialog boxes.
+   - Lucide icons provide the vector language; no hand-authored SVGs.
+============================================================================ */
+
+function ArchitectSystem({ reduceMotion }: { reduceMotion: boolean }) {
+  return (
+    <div className="[font-family:Inter,ui-sans-serif,system-ui,sans-serif]">
+      {/* Desktop / tablet topology */}
+      <div className="hidden md:block">
+        <DesktopArchitectureMap reduceMotion={reduceMotion} />
+      </div>
+
+      {/* Mobile: same architecture, reflowed for readability */}
+      <div className="md:hidden">
+        <MobileArchitectureMap reduceMotion={reduceMotion} />
+      </div>
+    </div>
+  );
+}
+
+function DesktopArchitectureMap({
   reduceMotion,
 }: {
   reduceMotion: boolean;
 }) {
   return (
-    <div className="relative h-full min-h-[610px] w-full overflow-hidden bg-[#0E5CEE]">
-      {/* architecture grid */}
+    <div className="relative mx-auto min-h-[480px] w-full max-w-[780px] overflow-hidden bg-transparent px-2 py-6">
+      {/* Light engineering grid */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(20,99,255,0.045)_1px,transparent_1px),linear-gradient(to_bottom,rgba(20,99,255,0.045)_1px,transparent_1px)] [background-size:38px_38px] [mask-image:radial-gradient(ellipse_92%_92%_at_50%_50%,black_30%,transparent_100%)]"
+      />
 
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.09)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.09)_1px,transparent_1px)] [background-size:32px_32px]" />
+      {/* ------------------------------------------------------------------
+          TOP RUNTIME LAYERS
+          API GATEWAY -> SERVICE LAYER -> DATA LAYER
+      ------------------------------------------------------------------- */}
+      <div className="relative z-20 grid grid-cols-3 items-center gap-6 px-4 pt-6">
+        <ArchitectNode
+          icon={Network}
+          title="API Gateway"
+          detail="EDGE REQUESTS"
+        />
 
-      {/* canvas is horizontally safe on narrow screens */}
+        <ArchitectNode
+          icon={Boxes}
+          title="Service Layer"
+          detail="BUSINESS LOGIC"
+          active
+        />
 
-      <div className="absolute inset-0 overflow-x-auto px-5 pb-16 pt-24 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <div className="relative mx-auto min-h-[500px] min-w-[920px] max-w-[980px]">
-          {/* SYSTEM BOUNDARY */}
+        <ArchitectNode
+          icon={Database}
+          title="Data Layer"
+          detail="STATE + STORAGE"
+        />
+      </div>
 
-          <div className="absolute inset-x-4 bottom-5 top-2 rounded-[26px] border border-dashed border-white/30">
-            <span className="absolute left-6 top-4 bg-[#0E5CEE] px-3 font-mono text-[9px] uppercase tracking-[0.17em] text-white/50">
-              ADRIG production boundary
-            </span>
-          </div>
+      {/* API -> SERVICE */}
+      <DesktopHorizontalConnector
+        className="left-[31%] top-[86px] w-[5%]"
+        label="REQUEST"
+        reduceMotion={reduceMotion}
+        delay={0}
+      />
 
-          {/* ==================================================
-              GRID
-          ================================================== */}
+      {/* SERVICE -> DATA */}
+      <DesktopHorizontalConnector
+        className="left-[64%] top-[86px] w-[5%]"
+        label="QUERY"
+        reduceMotion={reduceMotion}
+        delay={0.35}
+      />
 
-          <div className="absolute inset-x-10 bottom-12 top-16 grid grid-cols-[220px_70px_240px_70px_220px] grid-rows-[150px_78px_150px] items-center justify-center">
-            {/* ----------------------------------------------
-                TOP ROW
-            ---------------------------------------------- */}
+      {/* ------------------------------------------------------------------
+          CONTROL / OBSERVABILITY PLANE (Aligned with Service & Data layers)
+      ------------------------------------------------------------------- */}
+      <div className="relative z-20 mt-16 grid grid-cols-3 gap-6 px-4">
+        <div className="hidden sm:block" />
 
-            <div className="col-start-1 row-start-1 flex justify-center">
-              <ArchitectureBox
-                label="API Gateway"
-                sublabel="Edge requests"
-                icon={Network}
-                delay={0}
-                reduceMotion={reduceMotion}
-              />
-            </div>
+        <ArchitectNode
+          icon={ShieldCheck}
+          title="Auth / Policy"
+          detail="IDENTITY + RULES"
+          compact
+        />
 
-            <div className="col-start-2 row-start-1 flex items-center">
-              <HorizontalDataConnector
-                label="REQUEST"
-                delay={0.25}
-                reduceMotion={reduceMotion}
-              />
-            </div>
+        <ArchitectNode
+          icon={Gauge}
+          title="Observability"
+          detail="LOGS + TRACES"
+          compact
+        />
+      </div>
 
-            <div className="col-start-3 row-start-1 flex justify-center">
-              <ArchitectureBox
-                label="Service Layer"
-                sublabel="Business logic"
-                icon={Boxes}
-                active
-                delay={0.08}
-                reduceMotion={reduceMotion}
-              />
-            </div>
+      {/* SERVICE -> POLICY */}
+      <DesktopVerticalConnector
+        className="left-[50%] top-[158px] h-[48px]"
+        label="POLICY"
+        reduceMotion={reduceMotion}
+        delay={0.5}
+      />
 
-            <div className="col-start-4 row-start-1 flex items-center">
-              <HorizontalDataConnector
-                label="QUERY"
-                delay={0.42}
-                reduceMotion={reduceMotion}
-              />
-            </div>
+      {/* DATA -> OBSERVABILITY */}
+      <DesktopVerticalConnector
+        className="left-[83.3%] top-[158px] h-[48px]"
+        label="METRICS"
+        reduceMotion={reduceMotion}
+        delay={0.7}
+      />
 
-            <div className="col-start-5 row-start-1 flex justify-center">
-              <ArchitectureBox
-                label="Data Layer"
-                sublabel="State + storage"
-                icon={Database}
-                delay={0.16}
-                reduceMotion={reduceMotion}
-              />
-            </div>
+      {/* AUTH -> OBSERVABILITY */}
+      <DesktopHorizontalConnector
+        className="left-[64%] top-[252px] w-[5%]"
+        label="AUDIT"
+        reduceMotion={reduceMotion}
+        delay={0.9}
+      />
 
-            {/* ----------------------------------------------
-                VERTICAL CONNECTIONS
-            ---------------------------------------------- */}
+      {/* Bottom architecture datum */}
+      <div className="relative z-20 mx-4 mt-12 flex items-center gap-3 border-t border-[#DCE8F8] pt-5">
+        <span className="h-2 w-2 rounded-full bg-[#1463FF]" />
+        <span className="font-mono text-[9.5px] font-semibold uppercase tracking-[0.16em] text-[#6F8EBB]">
+          Live data connection layer
+        </span>
+        <div className="h-px flex-1 bg-[#CFE0FA]" />
+      </div>
+    </div>
+  );
+}
 
-            <div className="col-start-3 row-start-2 flex h-full justify-center">
-              <VerticalDataConnector
-                label="POLICY"
-                delay={0.6}
-                reduceMotion={reduceMotion}
-              />
-            </div>
+function MobileArchitectureMap({
+  reduceMotion,
+}: {
+  reduceMotion: boolean;
+}) {
+  return (
+    <div className="relative mx-auto max-w-[440px] py-4">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(20,99,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(20,99,255,0.04)_1px,transparent_1px)] [background-size:32px_32px]"
+      />
 
-            <div className="col-start-5 row-start-2 flex h-full justify-center">
-              <VerticalDataConnector
-                label="METRICS"
-                delay={0.74}
-                reduceMotion={reduceMotion}
-              />
-            </div>
+      <div className="relative z-10 py-2">
+        <div>
+          <ArchitectNode
+            icon={Network}
+            title="API Gateway"
+            detail="EDGE REQUESTS"
+          />
+        </div>
 
-            {/* ----------------------------------------------
-                BOTTOM ROW
-            ---------------------------------------------- */}
+        <MobileConnector
+          label="REQUEST"
+          reduceMotion={reduceMotion}
+          delay={0}
+        />
 
-            <div className="col-start-3 row-start-3 flex justify-center">
-              <ArchitectureBox
-                label="Auth / Policy"
-                sublabel="Identity + rules"
-                icon={ShieldCheck}
-                delay={0.24}
-                reduceMotion={reduceMotion}
-              />
-            </div>
+        <ArchitectNode
+          icon={Boxes}
+          title="Service Layer"
+          detail="BUSINESS LOGIC"
+          active
+        />
 
-            <div className="col-start-4 row-start-3 flex items-center">
-              <HorizontalDataConnector
-                label="AUDIT"
-                delay={0.9}
-                reduceMotion={reduceMotion}
-              />
-            </div>
+        <MobileConnector
+          label="QUERY"
+          reduceMotion={reduceMotion}
+          delay={0.25}
+        />
 
-            <div className="col-start-5 row-start-3 flex justify-center">
-              <ArchitectureBox
-                label="Observability"
-                sublabel="Logs + traces"
-                icon={Gauge}
-                delay={0.32}
-                reduceMotion={reduceMotion}
-              />
-            </div>
-          </div>
+        <ArchitectNode
+          icon={Database}
+          title="Data Layer"
+          detail="STATE + STORAGE"
+        />
 
-          {/* DATA CONNECTION LABEL */}
+        <div className="my-6 flex items-center gap-3">
+          <div className="h-px flex-1 bg-[#CFE0FA]" />
+          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#7891B6]">
+            Control plane
+          </span>
+          <div className="h-px flex-1 bg-[#CFE0FA]" />
+        </div>
 
-          <div className="absolute bottom-5 left-8 flex items-center gap-3">
-            <span className="h-2 w-2 rounded-full bg-white" />
+        <div className="grid grid-cols-2 gap-3.5">
+          <ArchitectNode
+            icon={ShieldCheck}
+            title="Auth / Policy"
+            detail="IDENTITY + RULES"
+            compact
+          />
+          <ArchitectNode
+            icon={Gauge}
+            title="Observability"
+            detail="LOGS + TRACES"
+            compact
+          />
+        </div>
 
-            <span className="font-mono text-[8px] uppercase tracking-[0.16em] text-white/55">
-              live data connection layer
-            </span>
-          </div>
+        <div className="mt-7 flex items-center gap-3">
+          <span className="h-2 w-2 rounded-full bg-[#1463FF]" />
+          <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.14em] text-[#6F8EBB]">
+            Live data connection layer
+          </span>
+          <div className="h-px flex-1 bg-[#CFE0FA]" />
         </div>
       </div>
     </div>
   );
 }
 
-/* ============================================================
-   ARCHITECTURE BOX
-   ~40% LARGER THAN PREVIOUS VERSION
-============================================================ */
-
-function ArchitectureBox({
-  label,
-  sublabel,
+function ArchitectNode({
   icon: Icon,
+  title,
+  detail,
   active = false,
-  delay,
-  reduceMotion,
+  compact = false,
 }: {
-  label: string;
-  sublabel: string;
-  icon: LucideIcon;
+  icon: IconType;
+  title: string;
+  detail: string;
   active?: boolean;
-  delay: number;
-  reduceMotion: boolean;
+  compact?: boolean;
 }) {
   return (
     <motion.div
-      initial={
-        reduceMotion
-          ? false
-          : {
-              opacity: 0,
-              scale: 0.93,
-              y: 12,
-            }
-      }
-      whileInView={{
-        opacity: 1,
-        scale: 1,
-        y: 0,
-      }}
-      viewport={{
-        once: true,
-      }}
-      transition={{
-        duration: 0.5,
-        delay,
-        ease: "easeInOut",
-      }}
-      className={`relative z-20 flex min-h-[118px] w-full max-w-[220px] flex-col justify-center rounded-[18px] border px-6 py-5 text-white shadow-[0_14px_32px_rgba(3,25,78,0.22)] ${
+      initial={{ opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.45 }}
+      transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+      className={[
+        "relative z-20 min-w-0 rounded-[18px] border transition-all",
+        "bg-white shadow-[0_10px_30px_-15px_rgba(7,26,51,0.06)]",
         active
-          ? "border-white bg-[#073B9B]"
-          : "border-white/25 bg-[#0A4BCB]"
-      }`}
+          ? "border-[#1463FF] bg-[#F7FAFF] shadow-[0_14px_36px_-16px_rgba(20,99,255,0.2)]"
+          : "border-[#D6E3F5] hover:border-[#B5CEF7]",
+        compact ? "px-4 py-4 sm:px-4.5 sm:py-4.5" : "px-4 py-5 sm:px-5 sm:py-5",
+      ].join(" ")}
     >
-      <div className="flex items-center justify-between">
-        <Icon className="h-5 w-5 text-white" />
+      <div className="flex items-start justify-between gap-3">
+        <span
+          className={[
+            "flex h-9 w-9 shrink-0 items-center justify-center rounded-full",
+            active
+              ? "bg-[#1463FF] text-white"
+              : "bg-[#EAF2FF] text-[#1463FF]",
+          ].join(" ")}
+        >
+          <Icon className="h-4.5 w-4.5" strokeWidth={1.8} />
+        </span>
 
         <span
-          className={`h-2 w-2 rounded-full ${
-            active
-              ? "bg-white"
-              : "bg-white/45"
-          }`}
+          className={[
+            "mt-1.5 h-2 w-2 rounded-full",
+            active ? "bg-[#1463FF]" : "bg-[#D0DFFA]",
+          ].join(" ")}
         />
       </div>
 
-      <p className="mt-4 text-[17px] font-semibold tracking-[-0.035em] text-white">
-        {label}
+      <p
+        className={[
+          "font-semibold tracking-[-0.03em] whitespace-nowrap",
+          compact ? "mt-3.5 text-[14.5px] sm:text-[15.5px]" : "mt-4 text-[15.5px] sm:text-[16.5px]",
+          active ? "text-[#1463FF]" : "text-[#071126]",
+        ].join(" ")}
+      >
+        {title}
       </p>
 
-      <p className="mt-1.5 font-mono text-[8px] uppercase tracking-[0.12em] text-white/50">
-        {sublabel}
+      <p className="mt-1.5 font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-[#657995]">
+        {detail}
       </p>
     </motion.div>
   );
 }
 
-/* ============================================================
-   HORIZONTAL DATA CONNECTOR
-============================================================ */
-
-function HorizontalDataConnector({
+function DesktopHorizontalConnector({
+  className,
   label,
-  delay,
   reduceMotion,
+  delay,
 }: {
+  className: string;
   label: string;
-  delay: number;
   reduceMotion: boolean;
+  delay: number;
 }) {
   return (
-    <div className="relative h-[42px] w-full">
-      <motion.div
-        initial={
-          reduceMotion
-            ? false
-            : {
-                scaleX: 0,
-              }
-        }
-        whileInView={{
-          scaleX: 1,
-        }}
-        viewport={{
-          once: true,
-        }}
-        transition={{
-          duration: 0.55,
-          delay,
-          ease: "easeInOut",
-        }}
-        className="absolute left-0 right-0 top-1/2 h-px origin-left bg-white/55"
-      />
+    <div className={`absolute z-10 h-px bg-[#CFE0FA] ${className}`}>
+      <span className="absolute -left-1 -top-[3px] h-2 w-2 rounded-full border border-white bg-[#1463FF]" />
+      <span className="absolute -right-1 -top-[3px] h-2 w-2 rounded-full border border-white bg-[#1463FF]" />
 
-      {/* arrow */}
+      <span className="absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[8px] font-semibold uppercase tracking-[0.12em] text-[#6F8EBB]">
+        {label}
+      </span>
 
-      <span className="absolute right-0 top-1/2 h-2.5 w-2.5 -translate-y-1/2 rotate-45 border-r border-t border-white/70" />
-
-      {/* moving data */}
-
-      {!reduceMotion && (
+      {!reduceMotion ? (
         <motion.span
-          animate={{
-            left: ["3%", "88%", "3%"],
-          }}
+          className="absolute -top-[3px] h-2 w-2 rounded-full bg-[#1463FF]"
+          animate={{ left: ["0%", "100%", "0%"] }}
           transition={{
             duration: 3.2,
-            repeat: Infinity,
             delay,
+            repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="absolute top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-white"
         />
-      )}
-
-      <span className="absolute left-1/2 top-[3px] -translate-x-1/2 font-mono text-[7px] tracking-[0.13em] text-white/40">
-        {label}
-      </span>
+      ) : null}
     </div>
   );
 }
 
-/* ============================================================
-   VERTICAL DATA CONNECTOR
-============================================================ */
-
-function VerticalDataConnector({
+function DesktopVerticalConnector({
+  className,
   label,
-  delay,
   reduceMotion,
+  delay,
 }: {
+  className: string;
   label: string;
-  delay: number;
   reduceMotion: boolean;
+  delay: number;
 }) {
   return (
-    <div className="relative h-full w-[50px]">
-      <motion.div
-        initial={
-          reduceMotion
-            ? false
-            : {
-                scaleY: 0,
-              }
-        }
-        whileInView={{
-          scaleY: 1,
-        }}
-        viewport={{
-          once: true,
-        }}
-        transition={{
-          duration: 0.55,
-          delay,
-          ease: "easeInOut",
-        }}
-        className="absolute bottom-0 left-1/2 top-0 w-px origin-top bg-white/55"
-      />
+    <div className={`absolute z-10 w-px bg-[#CFE0FA] ${className}`}>
+      <span className="absolute -left-[3px] -top-1 h-2 w-2 rounded-full border border-white bg-[#1463FF]" />
+      <span className="absolute -bottom-1 -left-[3px] h-2 w-2 rounded-full border border-white bg-[#1463FF]" />
 
-      <span className="absolute bottom-0 left-1/2 h-2.5 w-2.5 -translate-x-1/2 rotate-[135deg] border-r border-t border-white/70" />
-
-      {!reduceMotion && (
-        <motion.span
-          animate={{
-            top: ["4%", "84%", "4%"],
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            delay,
-            ease: "easeInOut",
-          }}
-          className="absolute left-1/2 h-2 w-2 -translate-x-1/2 rounded-full bg-white"
-        />
-      )}
-
-      <span className="absolute left-[31px] top-1/2 -translate-y-1/2 font-mono text-[7px] tracking-[0.12em] text-white/40">
+      <span className="absolute left-3 top-1/2 -translate-y-1/2 whitespace-nowrap font-mono text-[8px] font-semibold uppercase tracking-[0.12em] text-[#6F8EBB]">
         {label}
       </span>
+
+      {!reduceMotion ? (
+        <motion.span
+          className="absolute -left-[3px] h-2 w-2 rounded-full bg-[#1463FF]"
+          animate={{ top: ["0%", "100%", "0%"] }}
+          transition={{
+            duration: 3,
+            delay,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      ) : null}
     </div>
   );
 }
 
-/* ============================================================
-   03 — BUILD
-   BLUE KANBAN / SPRINT BOARD
-============================================================ */
-
-function BuildArtifact({
+function MobileConnector({
+  label,
   reduceMotion,
+  delay,
 }: {
+  label: string;
   reduceMotion: boolean;
+  delay: number;
 }) {
+  return (
+    <div className="relative mx-auto h-12 w-px bg-[#9DBCF0]">
+      <span className="absolute left-3 top-1/2 -translate-y-1/2 whitespace-nowrap font-mono text-[8px] font-semibold uppercase tracking-[0.12em] text-[#6F8EBB]">
+        {label}
+      </span>
+
+      {!reduceMotion ? (
+        <motion.span
+          className="absolute -left-[3px] h-2 w-2 rounded-full bg-[#1463FF]"
+          animate={{ top: ["0%", "100%", "0%"] }}
+          transition={{
+            duration: 2.8,
+            delay,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      ) : (
+        <span className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1463FF]" />
+      )}
+    </div>
+  );
+}
+
+/* ============================================================================
+   03 BUILD
+   Scanner = engineering inspection layer.
+   Kanban = retained delivery information architecture.
+============================================================================ */
+
+function BuildSystem({ reduceMotion }: { reduceMotion: boolean }) {
   const columns = [
     {
       title: "Backlog",
-      tasks: [
-        "Auth boundary",
-        "Search API",
-        "Audit model",
-      ],
+      tasks: ["Auth boundary", "Search API", "Audit model"],
     },
-
     {
       title: "In Progress",
-      tasks: [
-        "RAG pipeline",
-        "Webhook sync",
-      ],
+      tasks: ["RAG pipeline", "Webhook sync"],
     },
-
     {
       title: "Review",
-      tasks: [
-        "Evaluation suite",
-        "Access rules",
-      ],
+      tasks: ["Evaluation suite", "Access rules"],
     },
-
     {
       title: "Done",
-      tasks: [
-        "Schema design",
-        "CI pipeline",
-      ],
+      tasks: ["Schema design", "CI pipeline"],
     },
   ];
 
   return (
-    <div className="relative h-full min-h-[610px] w-full overflow-hidden bg-[#0E5CEE] px-5 py-8 sm:px-8">
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.07)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.07)_1px,transparent_1px)] [background-size:40px_40px]" />
+    <div className="relative overflow-hidden py-2 sm:py-3">
+      <div className="mx-auto max-w-[760px] px-1 pb-3 sm:px-2">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#DCE8F8] pb-5">
+          <div className="flex items-center gap-3">
+            <Braces className="h-5 w-5 text-[#1463FF]" />
+            <span className="text-base font-semibold text-[#18315F]">
+              Sprint 12
+            </span>
+          </div>
 
-      {/* board chrome */}
-
-      <div className="relative z-10 mb-5 flex items-center justify-between rounded-[16px] border border-white/20 bg-[#0A4BCB] px-5 py-4 text-white">
-        <div className="flex items-center gap-3">
-          <Braces className="h-4 w-4" />
-
-          <span className="text-sm font-semibold">
-            Sprint 12
-          </span>
+          <div className="flex items-center gap-2 text-xs font-medium text-[#71809A]">
+            <GitBranch className="h-4 w-4 text-[#1463FF]" />
+            main
+          </div>
         </div>
 
-        <div className="flex items-center gap-2 font-mono text-[9px] text-white/55">
-          <GitBranch className="h-3.5 w-3.5" />
-          main
-        </div>
-      </div>
+        <div className="mt-7 grid grid-cols-1 gap-x-5 gap-y-8 sm:grid-cols-2 xl:grid-cols-4">
+          {columns.map((column, columnIndex) => (
+            <section key={column.title} className="min-w-0">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#1463FF]" />
+                  <h4 className="text-sm font-semibold text-[#18315F]">
+                    {column.title}
+                  </h4>
+                </div>
 
-      <div className="relative z-10 grid min-h-[440px] grid-cols-2 gap-3 sm:grid-cols-4">
-        {columns.map((column, columnIndex) => (
-          <div
-            key={column.title}
-            className="rounded-[16px] border border-white/15 bg-[#0A46BE] p-3 sm:p-4"
-          >
-            <div className="flex items-center justify-between">
-              <p className="text-[10px] font-semibold text-white sm:text-xs">
-                {column.title}
-              </p>
+                <span className="font-mono text-[10px] text-[#8DA0BC]">
+                  {String(column.tasks.length).padStart(2, "0")}
+                </span>
+              </div>
 
-              <span className="font-mono text-[8px] text-white/45">
-                {column.tasks.length}
-              </span>
-            </div>
-
-            <div className="mt-4 space-y-3">
-              {column.tasks.map(
-                (task, taskIndex) => {
-                  const highlighted =
-                    columnIndex === 1 &&
-                    taskIndex === 0;
-
-                  if (highlighted) {
-                    return (
-                      <motion.div
-                        key={task}
-                        animate={
-                          reduceMotion
-                            ? undefined
-                            : {
-                                y: [0, -7, 0],
-                                x: [0, 4, 0],
-                              }
-                        }
-                        transition={{
-                          duration: 3.4,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                        }}
-                        className="rounded-[12px] border border-white/45 bg-[#073B9B] p-4 text-white shadow-[0_15px_30px_rgba(3,24,73,0.25)]"
-                      >
-                        <TaskCardContent
-                          task={task}
-                          accent
-                        />
-                      </motion.div>
-                    );
-                  }
+              <div className="mt-5 space-y-1">
+                {column.tasks.map((task, taskIndex) => {
+                  const active = columnIndex === 1 && taskIndex === 0;
 
                   return (
                     <motion.div
+                      layout
                       key={task}
-                      initial={
-                        reduceMotion
-                          ? false
-                          : {
-                              opacity: 0,
-                              y: 8,
-                            }
-                      }
-                      whileInView={{
-                        opacity: 1,
-                        y: 0,
-                      }}
-                      viewport={{
-                        once: true,
-                      }}
+                      initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
                       transition={{
-                        duration: 0.4,
-                        delay:
-                          columnIndex * 0.07 +
-                          taskIndex * 0.05,
-                        ease: "easeInOut",
+                        duration: 0.36,
+                        delay: columnIndex * 0.055 + taskIndex * 0.035,
                       }}
-                      className="rounded-[12px] border border-white/15 bg-[#0A4BCB] p-4 text-white"
+                      className={[
+                        "flex min-h-14 items-center justify-between gap-3 px-3 py-3",
+                        active ? "bg-[#EAF2FF]" : "bg-transparent",
+                      ].join(" ")}
                     >
-                      <TaskCardContent
-                        task={task}
-                      />
+                      <div className="flex min-w-0 items-center gap-3">
+                        <span
+                          className={[
+                            "h-2.5 w-2.5 shrink-0 rounded-full",
+                            active ? "bg-[#1463FF]" : "bg-[#BFD3F3]",
+                          ].join(" ")}
+                        />
+                        <span className="text-sm font-medium text-[#224579]">
+                          {task}
+                        </span>
+                      </div>
+
+                      <span className="font-mono text-[9px] text-[#98A9C1]">
+                        ADR-{Math.floor(task.length * 13)}
+                      </span>
                     </motion.div>
                   );
-                }
-              )}
-            </div>
-          </div>
-        ))}
+                })}
+              </div>
+            </section>
+          ))}
+        </div>
+
+        <div className="mt-10 flex items-center gap-4 border-t border-[#DCE8F8] pt-5">
+          <span className="h-2.5 w-2.5 rounded-full bg-[#1463FF]" />
+          <div className="h-px flex-1 bg-[#CFE0FA]" />
+          <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#6F88AF]">
+            working increment → review → release
+          </span>
+        </div>
       </div>
     </div>
   );
 }
 
-function TaskCardContent({
-  task,
-  accent = false,
-}: {
-  task: string;
-  accent?: boolean;
-}) {
-  return (
-    <>
-      <div className="flex items-center justify-between">
-        <span
-          className={`h-1.5 w-8 rounded-full ${
-            accent
-              ? "bg-white"
-              : "bg-white/25"
-          }`}
-        />
+/* ============================================================================
+   04 DEPLOY
+   ----------------------------------------------------------------------------
+   Production engineering pipeline.
+   RELEASE PACKAGE ↓ QUALITY GATE ↓ CONTROLLED RELEASE ↓ OBSERVE + OWN
+   AnimatedBeam carries the production signal between real DOM nodes.
+   One reverse beam communicates the rollback path.
+============================================================================ */
 
-        <span className="font-mono text-[7px] text-white/45">
-          ADR-{Math.floor(
-            task.length * 13
-          )}
-        </span>
-      </div>
-
-      <p className="mt-3 text-[11px] font-semibold leading-4 text-white">
-        {task}
-      </p>
-
-      <div className="mt-5 flex items-center justify-between">
-        <span className="rounded-full border border-white/10 bg-white/10 px-2 py-1 font-mono text-[7px] text-white/65">
-          engineering
-        </span>
-
-        <span
-          className={`h-4 w-4 rounded-full border ${
-            accent
-              ? "border-white bg-white"
-              : "border-white/30 bg-white/10"
-          }`}
-        />
-      </div>
-    </>
-  );
-}
-
-/* ============================================================
-   04 — DEPLOY
-   BLUE OBSERVABILITY DASHBOARD
-============================================================ */
-
-function DeployArtifact({
+function DeploySystem({
   reduceMotion,
 }: {
   reduceMotion: boolean;
 }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const packageRef = useRef<HTMLDivElement>(null);
+  const gateRef = useRef<HTMLDivElement>(null);
+  const releaseRef = useRef<HTMLDivElement>(null);
+  const runtimeRef = useRef<HTMLDivElement>(null);
+
   return (
-    <div className="relative h-full min-h-[610px] w-full overflow-hidden bg-[#0E5CEE] px-5 py-8 sm:px-8">
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:40px_40px]" />
+    <div className="relative overflow-hidden py-3 sm:py-5">
+      {/* =====================================================
+          ENGINEERING SURFACE
+      ====================================================== */}
+      <div
+        ref={containerRef}
+        className="relative mx-auto min-h-[520px] w-full max-w-[760px] overflow-hidden px-2 py-6 sm:px-4 md:min-h-[420px] lg:px-6"
+      >
+        {/* ---------------------------------------------------
+            VERY LIGHT TECHNICAL FIELD
+            No card/background enclosure. Just enough geometry to make
+            the pipeline readable.
+        ---------------------------------------------------- */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(20,99,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(20,99,255,0.035)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,black_20%,transparent_90%)]"
+        />
 
-      {/* dashboard header */}
+        {/* ---------------------------------------------------
+            PIPELINE
+            Mobile: vertical
+            Desktop: horizontal
+            AnimatedBeam reads actual DOM coordinates, so no manually
+            drawn responsive SVG is needed.
+        ---------------------------------------------------- */}
+        <div className="relative z-20 grid min-h-[420px] grid-cols-1 items-center gap-8 md:min-h-[320px] md:grid-cols-4 md:gap-4">
+          {/* 01 ------------------------------------------------ */}
+          <DeployNode
+            ref={packageRef}
+            index="01"
+            icon={PackageCheck}
+            title="Release package"
+            description="Versioned and reproducible."
+          />
 
-      <div className="relative z-10 flex items-center justify-between rounded-[16px] border border-white/20 bg-[#0A4BCB] px-5 py-4 text-white">
-        <div className="flex items-center gap-3">
-          <Gauge className="h-4 w-4" />
+          {/* 02 ------------------------------------------------ */}
+          <DeployNode
+            ref={gateRef}
+            index="02"
+            icon={ShieldCheck}
+            title="Quality gate"
+            description="Tests, policy and approval."
+            active
+          />
 
-          <span className="text-sm font-semibold">
-            Production overview
-          </span>
+          {/* 03 ------------------------------------------------ */}
+          <DeployNode
+            ref={releaseRef}
+            index="03"
+            icon={CloudUpload}
+            title="Controlled release"
+            description="Progressive and rollback-ready."
+          />
+
+          {/* 04 ------------------------------------------------ */}
+          <DeployNode
+            ref={runtimeRef}
+            index="04"
+            icon={Gauge}
+            title="Observe + own"
+            description="Telemetry, alerts and handover."
+          />
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-white" />
-
-          <span className="font-mono text-[8px] uppercase tracking-[0.12em] text-white/65">
-            Healthy
-          </span>
-        </div>
-      </div>
-
-      <div className="relative z-10 mt-4 grid gap-4 sm:grid-cols-[1fr_1.45fr]">
-        {/* main gauge */}
-
-        <div className="flex min-h-[390px] flex-col rounded-[18px] border border-white/15 bg-[#0A46BE] p-5 text-white">
-          <div className="flex items-center justify-between">
-            <p className="font-mono text-[8px] uppercase tracking-[0.14em] text-white/50">
-              Service health
-            </p>
-
-            <ShieldCheck className="h-5 w-5" />
-          </div>
-
-          <motion.div
-            initial={
-              reduceMotion
-                ? false
-                : {
-                    opacity: 0,
-                    scale: 0.9,
-                  }
-            }
-            whileInView={{
-              opacity: 1,
-              scale: 1,
-            }}
-            viewport={{
-              once: true,
-            }}
-            transition={{
-              duration: 0.65,
-              ease: "easeInOut",
-            }}
-            className="relative mx-auto mt-10 flex h-[190px] w-[190px] items-center justify-center rounded-full"
-            style={{
-              background:
-                "conic-gradient(#FFFFFF 0deg 359.64deg, rgba(255,255,255,0.14) 359.64deg 360deg)",
-            }}
-          >
-            <div className="flex h-[154px] w-[154px] flex-col items-center justify-center rounded-full bg-[#0A46BE]">
-              <span className="text-[38px] font-semibold tracking-[-0.065em] text-white">
-                99.9
-              </span>
-
-              <span className="font-mono text-[8px] uppercase tracking-[0.14em] text-white/45">
-                uptime %
-              </span>
-            </div>
-          </motion.div>
-
-          <div className="mt-auto flex justify-between border-t border-white/15 pt-5 text-[9px]">
-            <span className="text-white/45">
-              region
-            </span>
-
-            <span className="font-medium text-white">
-              ap-south-1
-            </span>
-          </div>
-        </div>
-
-        {/* telemetry */}
-
-        <div className="grid gap-4">
-          <MetricPanel
-            label="Latency"
-            value="84ms"
-            status="Monitoring"
-          >
-            <SparkBars
-              values={[
-                28, 34, 30, 48, 44, 58,
-                51, 62, 55, 67, 60, 72,
-              ]}
-              reduceMotion={reduceMotion}
+        {/* =====================================================
+            ANIMATED PRODUCTION SIGNAL
+        ====================================================== */}
+        {!reduceMotion && (
+          <>
+            {/* package -> quality */}
+            <AnimatedBeam
+              containerRef={containerRef}
+              fromRef={packageRef}
+              toRef={gateRef}
+              duration={5.2}
+              delay={0}
+              pathColor="#CFE0FA"
+              pathWidth={2}
+              pathOpacity={0.75}
+              gradientStartColor="#1463FF"
+              gradientStopColor="#79A7FF"
             />
-          </MetricPanel>
 
-          <MetricPanel
-            label="Error rate"
-            value="0.08%"
-            status="Healthy"
-          >
-            <SparkBars
-              values={[
-                16, 12, 14, 10, 18, 9,
-                8, 11, 7, 10, 8, 6,
-              ]}
-              reduceMotion={reduceMotion}
+            {/* quality -> release */}
+            <AnimatedBeam
+              containerRef={containerRef}
+              fromRef={gateRef}
+              toRef={releaseRef}
+              duration={5.2}
+              delay={0.45}
+              pathColor="#CFE0FA"
+              pathWidth={2}
+              pathOpacity={0.75}
+              gradientStartColor="#1463FF"
+              gradientStopColor="#79A7FF"
             />
-          </MetricPanel>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-[16px] border border-white/15 bg-[#0A46BE] p-4 text-white">
-              <div className="flex items-center gap-2">
-                <Network className="h-4 w-4" />
+            {/* release -> observability */}
+            <AnimatedBeam
+              containerRef={containerRef}
+              fromRef={releaseRef}
+              toRef={runtimeRef}
+              duration={5.2}
+              delay={0.9}
+              pathColor="#CFE0FA"
+              pathWidth={2}
+              pathOpacity={0.75}
+              gradientStartColor="#1463FF"
+              gradientStopColor="#79A7FF"
+            />
 
-                <span className="font-mono text-[8px] uppercase text-white/45">
-                  Requests
-                </span>
-              </div>
+            {/* -------------------------------------------------
+                ROLLBACK / FEEDBACK PATH
+                This is intentionally subtler. It communicates:
+                observe → detect → rollback/release control
+                without adding another diagram.
+            -------------------------------------------------- */}
+            <AnimatedBeam
+              containerRef={containerRef}
+              fromRef={releaseRef}
+              toRef={runtimeRef}
+              reverse
+              curvature={82}
+              duration={7}
+              delay={1.4}
+              pathColor="#DCE8F8"
+              pathWidth={1.25}
+              pathOpacity={0.35}
+              gradientStartColor="#8EB5FF"
+              gradientStopColor="#1463FF"
+            />
+          </>
+        )}
 
-              <p className="mt-5 text-2xl font-semibold tracking-[-0.045em] text-white">
-                18.4k
-              </p>
-
-              <p className="mt-1 text-[9px] text-white/45">
-                last 15 min
-              </p>
-            </div>
-
-            <div className="rounded-[16px] border border-white/15 bg-[#0A46BE] p-4 text-white">
-              <div className="flex items-center gap-2">
-                <GitBranch className="h-4 w-4" />
-
-                <span className="font-mono text-[8px] uppercase text-white/45">
-                  Release
-                </span>
-              </div>
-
-              <p className="mt-5 text-2xl font-semibold tracking-[-0.045em] text-white">
-                v2.4.1
-              </p>
-
-              <p className="mt-1 text-[9px] text-white/65">
-                stable
-              </p>
-            </div>
-          </div>
+        {/* =====================================================
+            PRODUCTION STATE
+        ====================================================== */}
+        <div className="relative z-20 mx-auto mt-1 flex max-w-[820px] flex-col items-center justify-center gap-3 border-t border-[#DCE8F8] pt-7 sm:flex-row sm:gap-8 md:mt-10">
+          <ProductionState icon={Check}>
+            Release controlled
+          </ProductionState>
+          <ProductionState icon={RotateCcw}>
+            Rollback ready
+          </ProductionState>
+          <ProductionState icon={Gauge}>
+            Runtime visible
+          </ProductionState>
+          <ProductionState icon={Server}>
+            Ownership handed over
+          </ProductionState>
         </div>
       </div>
     </div>
   );
 }
 
-/* ============================================================
-   DEPLOY METRIC PANEL
-============================================================ */
+type DeployNodeProps = {
+  index: string;
+  icon: ComponentType<{
+    className?: string;
+    strokeWidth?: number;
+  }>;
+  title: string;
+  description: string;
+  active?: boolean;
+};
 
-function MetricPanel({
-  label,
-  value,
-  status,
+const DeployNode = forwardRef<HTMLDivElement, DeployNodeProps>(
+  (
+    {
+      index,
+      icon: Icon,
+      title,
+      description,
+      active = false,
+    },
+    ref,
+  ) => {
+    return (
+      <div
+        ref={ref}
+        className="relative z-20 flex flex-col items-center text-center"
+      >
+        {/* NUMBER */}
+        <span className="mb-4 font-mono text-[10px] tracking-[0.16em] text-[#7D94B9]">
+          {index}
+        </span>
+
+        {/* =====================================================
+            MACHINE NODE
+        ====================================================== */}
+        <div
+          className={`relative flex h-[116px] w-[116px] items-center justify-center rounded-[28px] border transition-colors sm:h-[132px] sm:w-[132px] ${
+            active
+              ? `border-[#1463FF] bg-[#EAF2FF]`
+              : `border-[#BFD3F3] bg-white`
+          }`}
+        >
+          {/* MACHINE CORNER */}
+          <span className="absolute left-3 top-3 font-mono text-[8px] tracking-[0.12em] text-[#8EA2C1]">
+            SYS/{index}
+          </span>
+
+          <div
+            className={`flex h-14 w-14 items-center justify-center rounded-full ${
+              active
+                ? `bg-[#1463FF] text-white`
+                : `bg-[#F4F8FF] text-[#1463FF]`
+            }`}
+          >
+            <Icon className="h-7 w-7" strokeWidth={1.65} />
+          </div>
+
+          {/* ACTIVE STATUS */}
+          {active && (
+            <span className="absolute bottom-3 right-3 h-2.5 w-2.5 rounded-full bg-[#1463FF]" />
+          )}
+        </div>
+
+        {/* =====================================================
+            LABEL
+        ====================================================== */}
+        <h4 className="mt-5 text-lg font-semibold tracking-[-0.035em] text-[#122B55] sm:text-xl">
+          {title}
+        </h4>
+        <p className="mt-2 max-w-[190px] text-sm leading-6 text-[#71809A]">
+          {description}
+        </p>
+      </div>
+    );
+  },
+);
+DeployNode.displayName = "DeployNode";
+
+function ProductionState({
+  icon: Icon,
   children,
 }: {
-  label: string;
-  value: string;
-  status: string;
-  children: ReactNode;
+  icon: ComponentType<{
+    className?: string;
+    strokeWidth?: number;
+  }>;
+  children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-[16px] border border-white/15 bg-[#0A46BE] p-5 text-white">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="font-mono text-[8px] uppercase tracking-[0.12em] text-white/45">
-            {label}
-          </p>
-
-          <p className="mt-2 text-2xl font-semibold tracking-[-0.045em] text-white">
-            {value}
-          </p>
-        </div>
-
-        <div className="flex items-center gap-1.5">
-          <span className="h-1.5 w-1.5 rounded-full bg-white" />
-
-          <span className="font-mono text-[7px] uppercase tracking-[0.1em] text-white/50">
-            {status}
-          </span>
-        </div>
-      </div>
-
-      <div className="mt-5 h-[52px]">
-        {children}
-      </div>
+    <div className="inline-flex items-center gap-2 text-sm font-medium text-[#486284]">
+      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#EAF2FF] text-[#1463FF]">
+        <Icon className="h-3.5 w-3.5" strokeWidth={2} />
+      </span>
+      <span>{children}</span>
     </div>
   );
 }
 
-/* ============================================================
-   SPARK BAR CHART
-============================================================ */
+/* ============================================================================
+   SMALL SUPPORTING FACT
+============================================================================ */
 
-function SparkBars({
-  values,
-  reduceMotion,
+function SignalFact({
+  icon: Icon,
+  value,
+  label,
 }: {
-  values: number[];
-  reduceMotion: boolean;
+  icon: IconType;
+  value: string;
+  label: string;
 }) {
   return (
-    <div className="flex h-full items-end gap-1.5">
-      {values.map((value, index) => (
-        <motion.span
-          key={`${value}-${index}`}
-          initial={
-            reduceMotion
-              ? false
-              : {
-                  height: 0,
-                }
-          }
-          whileInView={{
-            height: `${value}%`,
-          }}
-          viewport={{
-            once: true,
-          }}
-          transition={{
-            duration: 0.5,
-            delay: index * 0.03,
-            ease: "easeInOut",
-          }}
-          className={`min-w-0 flex-1 rounded-t-[2px] ${
-            index === values.length - 1
-              ? "bg-white"
-              : "bg-white/20"
-          }`}
-        />
-      ))}
+    <div className="flex min-h-20 items-center gap-3 border-t border-[#DCE8F8] px-2 pt-4">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EAF2FF] text-[#1463FF]">
+        <Icon className="h-5 w-5" strokeWidth={1.8} />
+      </span>
+
+      <div>
+        <p className="text-sm font-semibold text-[#173A72]">{value}</p>
+        <p className="mt-0.5 text-xs leading-5 text-[#71809A]">{label}</p>
+      </div>
     </div>
   );
 }
-
-export default AdrigProcessSection;

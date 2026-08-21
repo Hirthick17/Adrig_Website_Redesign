@@ -5,12 +5,23 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { LayoutGrid } from "../ui/layout-grid";
 import { InteractiveHoverButton } from "@/registry/magicui/interactive-hover-button";
+import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 import { WORK_ITEMS } from "@/lib/site-data";
 
 
 const CASE_STUDY_ASSETS = [
   {
-    keywords: ["rail", "railway", "train", "metro", "transport"],
+    keywords: ["rail-rules", "clarifier", "classifier", "rule", "rail rules"],
+    image: "/images/work/ai-rule-classifier.png",
+    label: "AI Rule Clarifier",
+  },
+  {
+    keywords: ["trackon", "track-on", "track on", "tracking"],
+    image: "/images/work/track-on.png",
+    label: "TrackOn Operations",
+  },
+  {
+    keywords: ["southern-railways", "rbms", "rail", "railway", "train", "metro", "transport"],
     image: "/case-studies/ChatGPT Image Aug 17, 2026, 10_36_32 AM (1).png",
     label: "Railway Intelligence",
   },
@@ -85,7 +96,7 @@ function CaseStudyContent({
       {/* TOP COPY */}
       <div className="max-w-xl">
         {client && (
-          <p className="font-inter text-[13px] font-medium tracking-[-0.01em] text-white/70">
+          <p className="font-inter text-[13px] font-semibold tracking-wide text-slate-500 uppercase">
             {client}
           </p>
         )}
@@ -98,9 +109,14 @@ function CaseStudyContent({
       {/* BOTTOM COPY */}
       <div className="flex items-end justify-between gap-5">
         {summary && (
-          <p className="max-w-[460px] font-inter text-[14px] leading-[1.55] text-white/72 sm:text-[15px]">
-            {summary}
-          </p>
+          <div className="max-w-[460px]">
+            <TextGenerateEffect
+              words={summary}
+              duration={0.4}
+              staggerDelay={0.04}
+              className="font-inter text-[14px] font-normal leading-[1.55] text-slate-600 sm:text-[15px]"
+            />
+          </div>
         )}
 
         <InteractiveHoverButton
@@ -116,7 +132,7 @@ function CaseStudyContent({
 }
 
 export function CaseStudiesShowcase() {
-  const featured = WORK_ITEMS.slice(0, 4);
+  const featured = WORK_ITEMS.filter((w) => w.slug !== "miporis").slice(0, 3);
 
   const cards = featured.map((work, index) => {
     const visual = resolveVisual(work, index);
@@ -125,7 +141,6 @@ export function CaseStudiesShowcase() {
       "md:col-span-2",
       "col-span-1",
       "col-span-1",
-      "md:col-span-2",
     ];
 
     return {
@@ -140,7 +155,7 @@ export function CaseStudiesShowcase() {
         />
       ),
 
-      className: layoutClasses[index],
+      className: layoutClasses[index] || "col-span-1",
 
       thumbnail: visual.image,
     };
@@ -199,10 +214,8 @@ export function CaseStudiesShowcase() {
         <div
           className="
             relative
-            min-h-[1000px]
             overflow-hidden
             rounded-[28px]
-            lg:min-h-[1200px]
           "
         >
           <LayoutGrid cards={cards} />

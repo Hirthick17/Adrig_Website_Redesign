@@ -53,8 +53,7 @@ const PRODUCT_DETAILS: Record<
       "Role-based dashboards for field, management, and executive teams",
     ],
     tech: ["React", "Node.js", "AWS"],
-    image:
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80",
+    image: "/images/work/track-on.png",
   },
   "dagala-analytics": {
     features: [
@@ -75,8 +74,7 @@ const PRODUCT_DETAILS: Record<
       "Deployable on-premise for secure, air-gapped environments",
     ],
     tech: ["Python", "LangChain", "OpenAI"],
-    image:
-      "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&auto=format&fit=crop&q=80",
+    image: "/images/work/ai-rule-classifier.png",
   },
 };
 
