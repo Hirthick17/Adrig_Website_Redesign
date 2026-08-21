@@ -288,6 +288,39 @@ const VISUALS: Record<
       output: "Roadmap",
     },
   ],
+
+  blockchain: [
+    {
+      center: "Smart Contracts",
+      sources: [
+        "Solidity",
+        "Oracles",
+        "Security",
+        "Ledger",
+      ],
+      output: "Verified Contract",
+    },
+    {
+      center: "Consensus Node",
+      sources: [
+        "Transactions",
+        "State",
+        "Signatures",
+        "Validators",
+      ],
+      output: "Immutable Block",
+    },
+    {
+      center: "Settlement Bridge",
+      sources: [
+        "Multi-Party",
+        "Escrow",
+        "Audit Log",
+        "Webhooks",
+      ],
+      output: "Instant Settlement",
+    },
+  ],
 };
 
 const Node = forwardRef<
