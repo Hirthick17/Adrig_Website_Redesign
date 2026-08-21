@@ -4,7 +4,6 @@ import { useRef } from "react";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import Gsap from "/gsap"
 import {
   motion,
   useReducedMotion,
